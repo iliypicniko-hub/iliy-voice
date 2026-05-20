@@ -249,6 +249,11 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .btn-preview { background: rgba(200,150,90,.15); color: rgba(200,150,90,.9); border: 1px solid rgba(200,150,90,.3); border-radius: 50px; padding: 15px 20px; font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: .1em; cursor: pointer; transition: all .2s; white-space: nowrap; }
 .btn-preview:hover { background: rgba(200,150,90,.25); }
 .saved-msg { text-align: center; font-size: 12px; color: rgba(122,152,112,.8); margin-top: 10px; display: none; }
+.f-chips-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.f-chips-row .f-chips { margin-bottom: 0; }
+.refresh-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,.45); cursor: pointer; transition: all .2s; white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; }
+.refresh-btn:hover { background: rgba(255,255,255,.12); color: white; }
+.refresh-btn.loading { opacity: .5; cursor: not-allowed; }
 
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
@@ -368,12 +373,14 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
         </div>
       </div>
       <div class="a-body">
-        <div class="f-chips">
-          <button class="f-chip on" onclick="setFilter('all',this)">すべて</button>
-          <button class="f-chip" onclick="setFilter(5,this)">★5</button>
-          <button class="f-chip" onclick="setFilter(4,this)">★4以上</button>
-          <button class="f-chip" onclick="setFilter('low',this)">★3以下</button>
-          <button class="f-chip" onclick="setFilter('sns',this)">SNS同意</button>
+        <div class="f-chips-row">
+          <div class="f-chips">
+            <button class="f-chip on" onclick="setFilter('all',this)">すべて</button>
+            <button class="f-chip" onclick="setFilter(5,this)">★5</button>
+            <button class="f-chip" onclick="setFilter('low',this)">★4以下</button>
+            <button class="f-chip" onclick="setFilter('sns',this)">SNS同意</button>
+          </div>
+          <button class="refresh-btn" onclick="refreshVoices()">↻ 更新</button>
         </div>
         <div class="v-list" id="vList"></div>
       </div>
@@ -672,11 +679,20 @@ async function loadVoices() {
   document.getElementById('vList').innerHTML='<div class="v-empty">読み込み中…</div>';
   try {
     const res=await fetch(GAS_URL+'?t='+Date.now());
-    voices=await res.json();
-    voices=voices.filter(v=>v&&v.date).map(v=>{
-      if(!v.month&&v.date){
-        try{const p=v.date.toString().split('/');v.month=p[0]+'-'+(p[1]||'01').padStart(2,'0');}catch(e){}
+    const raw=await res.json();
+    voices=raw.filter(v=>v&&v.date&&v.date!=='日付').map(v=>{
+      // dateを文字列に統一
+      const ds = String(v.date);
+      // YYYY/MM/DD または YYYY-MM-DDT... 両対応
+      let y,m;
+      if(ds.includes('/')){
+        const p=ds.split('/'); y=p[0]; m=(p[1]||'01').padStart(2,'0');
+      } else {
+        const d=new Date(ds); y=d.getFullYear(); m=String(d.getMonth()+1).padStart(2,'0');
+        // 表示用dateも整形
+        v.date = y+'/'+m+'/'+String(d.getDate()).padStart(2,'0');
       }
+      v.month = y+'-'+m;
       return v;
     });
   } catch(e){console.warn('読み込みエラー',e);voices=[];}
@@ -707,6 +723,14 @@ function previewCustomer() {
 
 function setFilter(v,btn){filterVal=v;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderResponses();}
 
+async function refreshVoices() {
+  const btn = document.querySelector('.refresh-btn');
+  btn.classList.add('loading'); btn.textContent = '読み込み中…';
+  await loadVoices();
+  renderResponses(); renderReport();
+  btn.classList.remove('loading'); btn.textContent = '↻ 更新';
+}
+
 function renderResponses() {
   document.getElementById('sTot').textContent=voices.length;
   const starred=voices.filter(v=>v.star>0);
@@ -715,7 +739,7 @@ function renderResponses() {
   document.getElementById('sSNS').textContent=voices.length?Math.round(snsC/voices.length*100)+'%':'—';
   let list=voices;
   if(filterVal===5) list=voices.filter(v=>v.star===5);
-  else if(filterVal===4) list=voices.filter(v=>v.star>=4);
+  
   else if(filterVal==='low') list=voices.filter(v=>v.star>0&&v.star<=3);
   else if(filterVal==='sns') list=voices.filter(v=>v.sns);
   const el=document.getElementById('vList');
