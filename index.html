@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iliy — スタッフ管理画面</title>
+<title>iliy — 撮影の感想をお聞かせください</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -25,9 +25,97 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: white; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-/* Login */
+#petalCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; display: none; }
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ══════════════════════
+   CUSTOMER
+══════════════════════ */
+#customerPage { background: var(--bg); min-height: 100vh; }
+#thanksPage { background: var(--bg); min-height: 100vh; align-items: center; justify-content: center; }
+#thanksPage.active { display: flex; }
+
+.c-wrap { max-width: 440px; margin: 0 auto; padding: 0 22px 100px; }
+.c-hero { text-align: center; padding: 60px 0 44px; animation: fadeUp .8s ease both; }
+.c-logo { font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: .45em; color: var(--accent); margin-bottom: 22px; text-transform: uppercase; }
+.c-title { font-family: 'Cormorant Garamond', serif; font-size: 27px; font-weight: 300; line-height: 1.4; letter-spacing: .06em; white-space: nowrap; color: #3d2a1a; }
+.c-sub { margin-top: 13px; font-size: 12.5px; color: var(--light); line-height: 2; letter-spacing: .04em; }
+
+.dots { display: flex; justify-content: center; gap: 7px; margin-bottom: 34px; }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--line2); transition: all .3s; }
+.dot.on { background: var(--accent); transform: scale(1.4); }
+
+.step { display: none; }
+.step.active { display: block; animation: fadeUp .45s ease both; }
+
+.card { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 24px 20px; margin-bottom: 14px; }
+.f-label { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400; letter-spacing: .14em; color: var(--accent); display: block; margin-bottom: 4px; }
+.f-hint { display: block; font-size: 11px; color: var(--light); letter-spacing: .03em; margin-bottom: 14px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; margin-top: 4px; }
+
+.star-row { display: flex; gap: 5px; justify-content: center; padding: 6px 0; }
+.star { font-size: 40px; cursor: pointer; color: var(--line2); transition: color .12s, transform .14s; user-select: none; line-height: 1; }
+.star.on { color: var(--gold); transform: scale(1.1); }
+
+.improve-wrap { display: none; }
+.improve-wrap.show { display: block; animation: fadeUp .4s ease both; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.chip { background: var(--off); border: 1.5px solid var(--line); border-radius: 40px; padding: 8px 15px; font-size: 13px; color: var(--text); cursor: pointer; transition: all .17s; letter-spacing: .02em; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.on { background: var(--accent); border-color: var(--accent); color: white; }
+
+.f-textarea { width: 100%; background: var(--off); border: 1.5px solid var(--line); border-radius: 12px; padding: 15px 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.9; resize: none; outline: none; transition: border-color .2s; }
+.f-textarea:focus { border-color: var(--accent); }
+.f-textarea::placeholder { color: #c4bbb0; font-size: 13px; line-height: 2; }
+.char-hint { text-align: right; font-size: 11px; color: var(--light); margin-top: 6px; }
+
+.cq-text { font-size: 14px; color: var(--text); line-height: 1.8; letter-spacing: .03em; margin-bottom: 4px; }
+.cq-hint { display: block; font-size: 11px; color: var(--light); margin-bottom: 14px; font-weight: 300; }
+.cq-opts { display: flex; flex-direction: column; gap: 9px; }
+.cq-opt { background: var(--off); border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 16px; cursor: pointer; transition: all .17s; display: flex; align-items: center; gap: 12px; }
+.cq-opt:hover { border-color: var(--accent); }
+.cq-opt.on { border-color: var(--accent); background: var(--accent-bg); }
+.cq-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line2); flex-shrink: 0; transition: all .17s; display: flex; align-items: center; justify-content: center; }
+.cq-opt.on .cq-circle { border-color: var(--accent); background: var(--accent); }
+.cq-circle-inner { width: 7px; height: 7px; border-radius: 50%; background: white; opacity: 0; transition: opacity .15s; }
+.cq-opt.on .cq-circle-inner { opacity: 1; }
+.cq-check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--line2); flex-shrink: 0; transition: all .17s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; }
+.cq-opt.on .cq-check { border-color: var(--accent); background: var(--accent); }
+.cq-label { font-size: 14px; color: var(--text); }
+.cq-free { width: 100%; background: var(--off); border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.8; resize: none; outline: none; min-height: 90px; transition: border-color .2s; }
+.cq-free:focus { border-color: var(--accent); }
+.cq-free::placeholder { color: #c4bbb0; font-size: 13px; }
+
+.sns-toggle { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: all .2s; margin-bottom: 14px; }
+.sns-toggle.on { border-color: var(--sage); background: var(--sage-bg); }
+.toggle-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--line2); flex-shrink: 0; margin-top: 1px; transition: all .17s; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; }
+.sns-toggle.on .toggle-box { border-color: var(--sage); background: var(--sage); }
+.sns-main { font-size: 14px; color: var(--text); line-height: 1.6; }
+.sns-sub { font-size: 11px; color: var(--light); margin-top: 4px; line-height: 1.7; }
+
+.btn-next { width: 100%; background: var(--text); color: white; border: none; border-radius: 50px; padding: 17px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; letter-spacing: .22em; cursor: pointer; transition: all .25s; margin-top: 6px; }
+.btn-next:hover:not(:disabled) { background: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(140,111,80,.28); }
+.btn-next:disabled { opacity: .35; cursor: not-allowed; }
+.btn-back { width: 100%; background: transparent; color: var(--light); border: 1px solid var(--line); border-radius: 50px; padding: 12px; font-size: 12px; letter-spacing: .08em; cursor: pointer; transition: all .2s; margin-top: 8px; }
+.btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Thanks */
+.thanks-wrap { text-align: center; padding: 60px 30px; max-width: 380px; animation: fadeUp .8s ease both; }
+.thanks-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300; line-height: 1.8; letter-spacing: .06em; color: var(--text); margin-bottom: 24px; }
+.sns-cta { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 22px 20px; text-align: left; display: none; }
+.sns-cta.show { display: block; animation: fadeUp .5s .3s ease both; opacity: 0; animation-fill-mode: both; }
+.sns-cta-ttl { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 400; letter-spacing: .06em; color: var(--text); margin-bottom: 10px; line-height: 1.7; }
+.sns-cta-msg { font-size: 12.5px; color: var(--mid); line-height: 1.9; margin-bottom: 14px; }
+.sns-tag { display: inline-block; background: var(--accent-bg); color: var(--accent); border-radius: 8px; padding: 7px 14px; font-size: 13.5px; letter-spacing: .02em; }
+
+/* ══════════════════════
+   ADMIN
+══════════════════════ */
+#adminPage { background: var(--night); min-height: 100vh; }
+
 .a-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
 .login-box { text-align: center; width: 100%; max-width: 300px; }
 .login-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .4em; color: rgba(200,160,100,.6); margin-bottom: 32px; }
@@ -37,7 +125,6 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 .btn-login:hover { opacity: .85; }
 .login-err { font-size: 12px; color: #e0a880; margin-top: 12px; display: none; }
 
-/* Nav */
 .a-nav { display: flex; background: var(--night2); border-bottom: 1px solid rgba(255,255,255,.06); position: sticky; top: 0; z-index: 20; }
 .a-nav-btn { flex: 1; padding: 16px 8px; background: transparent; border: none; font-size: 12px; letter-spacing: .08em; color: rgba(255,255,255,.35); cursor: pointer; transition: all .2s; font-family: 'Noto Sans JP', sans-serif; border-bottom: 2px solid transparent; }
 .a-nav-btn.on { color: rgba(200,160,100,.9); border-bottom-color: rgba(200,160,100,.7); }
@@ -45,16 +132,14 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 .a-panel { display: none; }
 .a-panel.on { display: block; }
 
-/* URL bar */
 .url-bar { background: rgba(255,255,255,.03); border-bottom: 1px solid rgba(255,255,255,.06); padding: 14px 18px; max-width: 640px; margin: 0 auto; }
 .url-label { font-size: 10px; letter-spacing: .18em; color: rgba(200,150,90,.6); margin-bottom: 8px; }
 .url-row { display: flex; align-items: center; gap: 10px; }
 .url-text { flex: 1; font-size: 12px; color: rgba(255,255,255,.5); letter-spacing: .02em; word-break: break-all; font-family: monospace; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 8px 12px; }
-.url-copy-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; letter-spacing: .08em; cursor: pointer; transition: opacity .2s; white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; }
+.url-copy-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; cursor: pointer; transition: opacity .2s; white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; }
 .url-copy-btn:hover { opacity: .85; }
 .url-copy-btn.copied { background: var(--sage); }
 
-/* Responses */
 .a-header-bar { padding: 18px 18px 0; display: flex; align-items: center; justify-content: space-between; max-width: 640px; margin: 0 auto; }
 .a-brand { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .25em; color: rgba(200,150,90,.65); }
 .a-stats { display: flex; gap: 20px; }
@@ -62,10 +147,12 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 .a-num { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: white; line-height: 1; }
 .a-lbl { font-size: 10px; color: rgba(255,255,255,.25); letter-spacing: .08em; margin-top: 3px; }
 .a-body { padding: 16px 16px 60px; max-width: 640px; margin: 0 auto; }
+
 .f-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
 .f-chip { background: transparent; border: 1px solid rgba(255,255,255,.1); border-radius: 40px; padding: 5px 14px; font-size: 12px; color: rgba(255,255,255,.36); cursor: pointer; transition: all .18s; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; }
 .f-chip:hover { border-color: rgba(200,150,90,.6); color: rgba(200,150,90,.8); }
 .f-chip.on { border-color: rgba(200,150,90,.7); color: rgba(200,150,90,.9); background: rgba(200,150,90,.08); }
+
 .v-list { display: flex; flex-direction: column; gap: 11px; }
 .v-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); border-radius: 14px; padding: 17px 18px; transition: all .2s; animation: fadeUp .4s ease both; position: relative; overflow: hidden; }
 .v-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--gold)); opacity: 0; transition: opacity .2s; }
@@ -83,7 +170,6 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 .v-tag { font-size: 11px; background: rgba(140,111,80,.15); color: rgba(200,160,110,.8); border-radius: 20px; padding: 3px 10px; }
 .v-empty { text-align: center; padding: 70px 20px; color: rgba(255,255,255,.16); font-size: 13px; line-height: 2.3; }
 
-/* Report */
 .report-body { padding: 16px 16px 60px; max-width: 640px; margin: 0 auto; }
 .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .month-label { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: white; letter-spacing: .06em; }
@@ -119,7 +205,6 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 .voice-quote-text { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.9; }
 .voice-quote-meta { font-size: 11px; color: rgba(255,255,255,.22); margin-top: 6px; }
 
-/* Settings */
 .settings-body { padding: 16px 16px 80px; max-width: 600px; margin: 0 auto; }
 .settings-section { margin-bottom: 28px; }
 .settings-section-ttl { font-size: 11px; letter-spacing: .2em; color: rgba(200,150,90,.7); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.06); }
@@ -166,128 +251,205 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 .saved-msg { text-align: center; font-size: 12px; color: rgba(122,152,112,.8); margin-top: 10px; display: none; }
 
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
 </style>
 </head>
 <body>
+<canvas id="petalCanvas"></canvas>
 
-<div id="adminLogin" class="a-login">
-  <div class="login-box">
-    <div class="login-logo">iliy — staff</div>
-    <input class="login-in" id="passIn" type="password" placeholder="••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="btn-login" onclick="doLogin()">入室する</button>
-    <div class="login-err" id="loginErr">パスワードが違います</div>
+<!-- ═══════════════════ CUSTOMER ═══════════════════ -->
+<div id="customerPage" class="screen active">
+  <div class="c-wrap">
+    <div class="c-hero">
+      <div class="c-logo" id="dispLogo">iliy photo studio</div>
+      <h1 class="c-title" id="dispTitle">今回の撮影はいかがでしたか？</h1>
+      <p class="c-sub" id="dispSub" style="display:none;"></p>
+    </div>
+
+    <div class="dots" id="dots"></div>
+
+    <div class="step active" id="step0">
+      <div class="card">
+        <label class="f-label" id="dispStarLabel">満足度を教えてください</label>
+        <div class="star-row" id="starRow">
+          <span class="star" data-v="1">★</span>
+          <span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span>
+          <span class="star" data-v="4">★</span>
+          <span class="star" data-v="5">★</span>
+        </div>
+      </div>
+      <div class="improve-wrap" id="improveWrap">
+        <div class="card">
+          <label class="f-label" id="dispImproveLabel">改善できる点はありましたか</label>
+          <div class="chips" id="improveChips"></div>
+        </div>
+        <div class="card">
+          <label class="f-label" id="dispImproveDetailLabel">どのように改善できると思いますか</label>
+          <span class="f-hint" id="dispImproveDetailHint">なくてもOKです</span>
+          <textarea class="f-textarea" id="improveText" style="min-height:110px;" placeholder="例：もう少し撮影時間に余裕があると、子どもがリラックスできたかもしれません。" maxlength="300" oninput="document.getElementById('improveCnt').textContent=this.value.length"></textarea>
+          <div class="char-hint"><span id="improveCnt">0</span> / 300</div>
+        </div>
+      </div>
+      <button class="btn-next" id="nextStep0" onclick="nextStep()" disabled>次へ</button>
+    </div>
+
+    <div id="customStepsWrap"></div>
+
+    <div class="step" id="stepVoice">
+      <div class="card">
+        <label class="f-label" id="dispVoiceLabel">今回の撮影全体を通して、いかがでしたか</label>
+        <span class="f-hint" id="dispVoiceHint">なくてもOKです</span>
+        <textarea class="f-textarea" id="voiceText" style="min-height:160px;" placeholder="ご自由にお書きください" maxlength="500" oninput="document.getElementById('voiceCnt').textContent=this.value.length"></textarea>
+        <div class="char-hint"><span id="voiceCnt">0</span> / 500</div>
+      </div>
+      <button class="btn-next" onclick="nextStep()">次へ</button>
+      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+    </div>
+
+    <div class="step" id="stepSNS">
+      <div class="sns-toggle" id="snsToggle" onclick="toggleSNS()">
+        <div class="toggle-box" id="toggleBox"></div>
+        <div class="sns-txt">
+          <div class="sns-main" id="dispSNSMain">SNSへの掲載に同意する</div>
+          <div class="sns-sub" id="dispSNSSub">いただいたお声をInstagramなどで紹介させていただく場合があります。お名前は掲載しません。</div>
+        </div>
+      </div>
+      <button class="btn-next" onclick="doSubmit()">送信する</button>
+      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+    </div>
   </div>
 </div>
 
-<div id="adminDash" style="display:none; min-height:100vh;">
-  <div class="a-nav">
-    <button class="a-nav-btn on" onclick="switchPanel('responses',this)">回答一覧</button>
-    <button class="a-nav-btn" onclick="switchPanel('report',this)">月次レポート</button>
-    <button class="a-nav-btn" onclick="switchPanel('settings',this)">設問設定</button>
+<!-- ═══════════════════ THANKS ═══════════════════ -->
+<div id="thanksPage" class="screen">
+  <div class="thanks-wrap">
+    <div class="thanks-title" id="dispThanksTitle">受け取りました。<br>ありがとうございます。</div>
+    <div class="sns-cta" id="snsCTA">
+      <div class="sns-cta-ttl" id="dispCTATitle">これからご来店されるお客様の参考のために</div>
+      <p class="sns-cta-msg" id="dispCTAMsg">撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。</p>
+      <span class="sns-tag" id="dispSNSTag">@iliy_ai_life_familiy</span>
+    </div>
   </div>
+</div>
 
-  <!-- 回答一覧 -->
-  <div class="a-panel on" id="panel-responses">
-    <div class="url-bar">
-      <div class="url-label">お客様用URL</div>
-      <div class="url-row">
-        <div class="url-text" id="urlText"></div>
-        <button class="url-copy-btn" id="urlCopyBtn" onclick="copyURL()">コピー</button>
-      </div>
-    </div>
-    <div class="a-header-bar">
-      <div class="a-brand">お客様の声</div>
-      <div class="a-stats">
-        <div class="a-stat"><div class="a-num" id="sTot">0</div><div class="a-lbl">回答</div></div>
-        <div class="a-stat"><div class="a-num" id="sAvg">—</div><div class="a-lbl">平均★</div></div>
-        <div class="a-stat"><div class="a-num" id="sSNS">—</div><div class="a-lbl">SNS同意</div></div>
-      </div>
-    </div>
-    <div class="a-body">
-      <div class="f-chips">
-        <button class="f-chip on" onclick="setFilter('all',this)">すべて</button>
-        <button class="f-chip" onclick="setFilter(5,this)">★5</button>
-        <button class="f-chip" onclick="setFilter(4,this)">★4以上</button>
-        <button class="f-chip" onclick="setFilter('low',this)">★3以下</button>
-        <button class="f-chip" onclick="setFilter('sns',this)">SNS同意</button>
-      </div>
-      <div class="v-list" id="vList"></div>
+<!-- ═══════════════════ ADMIN ═══════════════════ -->
+<div id="adminPage" class="screen">
+  <div id="adminLogin" class="a-login">
+    <div class="login-box">
+      <div class="login-logo">iliy — staff</div>
+      <input class="login-in" id="passIn" type="password" placeholder="••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="btn-login" onclick="doLogin()">入室する</button>
+      <div class="login-err" id="loginErr">パスワードが違います</div>
     </div>
   </div>
 
-  <!-- 月次レポート -->
-  <div class="a-panel" id="panel-report">
-    <div class="report-body">
-      <div class="month-nav">
-        <button class="month-btn" onclick="changeMonth(-1)">‹</button>
-        <div class="month-label" id="monthLabel"></div>
-        <button class="month-btn" onclick="changeMonth(1)">›</button>
-      </div>
-      <div class="summary-grid">
-        <div class="sum-card"><div class="sum-num" id="rTot">0</div><div class="sum-lbl">回答数</div></div>
-        <div class="sum-card"><div class="sum-num" id="rAvg">—</div><div class="sum-lbl">平均評価</div></div>
-        <div class="sum-card"><div class="sum-num" id="rSNS">—</div><div class="sum-lbl">SNS同意率</div></div>
-      </div>
-      <div class="report-card"><div class="report-ttl">満足度の分布</div><div id="starBars"></div></div>
-      <div class="report-card"><div class="report-ttl">改善ポイント（★4以下）</div><div id="improveRanking"></div></div>
-      <div class="report-card"><div class="report-ttl">カスタム質問の集計</div><div id="cqReport"></div></div>
-      <div class="report-card"><div class="report-ttl">今月のお声</div><div class="voice-scroll" id="voiceScroll"></div></div>
+  <div id="adminDash" style="display:none;">
+    <div class="a-nav">
+      <button class="a-nav-btn on" onclick="switchPanel('responses',this)">回答一覧</button>
+      <button class="a-nav-btn" onclick="switchPanel('report',this)">月次レポート</button>
+      <button class="a-nav-btn" onclick="switchPanel('settings',this)">設問設定</button>
     </div>
-  </div>
 
-  <!-- 設問設定 -->
-  <div class="a-panel" id="panel-settings">
-    <div class="settings-body">
-      <div class="settings-section">
-        <div class="settings-section-ttl">ページ基本情報</div>
-        <div class="fixed-q">
-          <div class="s-in-row"><div class="s-in-lbl">ページタイトル</div><input class="s-in" id="cfgTitle" placeholder="今回の撮影はいかがでしたか？"></div>
-          <div class="s-in-row"><div class="s-in-lbl">サブテキスト</div><input class="s-in" id="cfgSub" placeholder="スタジオのスタッフが、大切に読みます。"></div>
+    <div class="a-panel on" id="panel-responses">
+      <div class="url-bar">
+        <div class="url-label">お客様用URL</div>
+        <div class="url-row">
+          <div class="url-text" id="urlText"></div>
+          <button class="url-copy-btn" id="urlCopyBtn" onclick="copyURL()">コピー</button>
         </div>
       </div>
-      <div class="settings-section">
-        <div class="settings-section-ttl">固定の設問</div>
-        <div class="fixed-q">
-          <div class="fixed-q-badge">★ 満足度</div>
-          <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgStarLabel" placeholder="満足度を教えてください"></div>
-        </div>
-        <div class="fixed-q">
-          <div class="fixed-q-badge">改善ポイント（★4以下のみ表示）</div>
-          <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgImproveLabel" placeholder="改善できる点はありましたか"></div>
-          <div class="s-in-row"><div class="s-in-lbl">選択肢（カンマ区切り）</div><input class="s-in" id="cfgImproveOpts" placeholder="スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間"></div>
-          <div class="s-in-row"><div class="s-in-lbl">詳細一言ラベル</div><input class="s-in" id="cfgImproveDetailLabel" placeholder="どのように改善できると思いますか"></div>
-          <div class="s-in-row"><div class="s-in-lbl">詳細一言サブテキスト</div><input class="s-in" id="cfgImproveDetailHint" placeholder="なくてもOKです"></div>
-        </div>
-        <div class="fixed-q">
-          <div class="fixed-q-badge">総合感想</div>
-          <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgVoiceLabel" placeholder="今回の撮影全体を通して、いかがでしたか"></div>
-          <div class="s-in-row"><div class="s-in-lbl">サブテキスト</div><input class="s-in" id="cfgVoiceHint" placeholder="なくてもOKです"></div>
-        </div>
-        <div class="fixed-q">
-          <div class="fixed-q-badge">SNS同意</div>
-          <div class="s-in-row"><div class="s-in-lbl">メインテキスト</div><input class="s-in" id="cfgSNSMain" placeholder="SNSへの掲載に同意する"></div>
-          <div class="s-in-row"><div class="s-in-lbl">説明テキスト</div><input class="s-in" id="cfgSNSSub" placeholder="いただいたお声をInstagramなどで紹介させていただく場合があります。"></div>
+      <div class="a-header-bar">
+        <div class="a-brand">お客様の声</div>
+        <div class="a-stats">
+          <div class="a-stat"><div class="a-num" id="sTot">0</div><div class="a-lbl">回答</div></div>
+          <div class="a-stat"><div class="a-num" id="sAvg">—</div><div class="a-lbl">平均★</div></div>
+          <div class="a-stat"><div class="a-num" id="sSNS">—</div><div class="a-lbl">SNS同意</div></div>
         </div>
       </div>
-      <div class="settings-section">
-        <div class="settings-section-ttl">サンキューページ</div>
-        <div class="fixed-q">
-          <div class="s-in-row"><div class="s-in-lbl">タイトル（&lt;br&gt;で改行可）</div><input class="s-in" id="cfgThanksTitle" placeholder="受け取りました。&lt;br&gt;ありがとうございます。"></div>
-          <div class="s-in-row"><div class="s-in-lbl">SNS CTAタイトル</div><input class="s-in" id="cfgCTATitle" placeholder="これからご来店されるお客様の参考のために"></div>
-          <div class="s-in-row"><div class="s-in-lbl">SNS CTAメッセージ</div><input class="s-in" id="cfgCTAMsg" placeholder="撮影のご感想をInstagramに投稿していただけると…"></div>
-          <div class="s-in-row"><div class="s-in-lbl">SNSタグ</div><input class="s-in" id="cfgSNSTag" placeholder="@iliy_ai_life_familiy"></div>
+      <div class="a-body">
+        <div class="f-chips">
+          <button class="f-chip on" onclick="setFilter('all',this)">すべて</button>
+          <button class="f-chip" onclick="setFilter(5,this)">★5</button>
+          <button class="f-chip" onclick="setFilter(4,this)">★4以上</button>
+          <button class="f-chip" onclick="setFilter('low',this)">★3以下</button>
+          <button class="f-chip" onclick="setFilter('sns',this)">SNS同意</button>
         </div>
+        <div class="v-list" id="vList"></div>
       </div>
-      <div class="settings-section">
-        <div class="settings-section-ttl">カスタム質問</div>
-        <div class="q-list" id="qList"></div>
-        <button class="btn-add-q" onclick="addQuestion()">＋ 質問を追加する</button>
+    </div>
+
+    <div class="a-panel" id="panel-report">
+      <div class="report-body">
+        <div class="month-nav">
+          <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+          <div class="month-label" id="monthLabel"></div>
+          <button class="month-btn" onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="summary-grid">
+          <div class="sum-card"><div class="sum-num" id="rTot">0</div><div class="sum-lbl">回答数</div></div>
+          <div class="sum-card"><div class="sum-num" id="rAvg">—</div><div class="sum-lbl">平均評価</div></div>
+          <div class="sum-card"><div class="sum-num" id="rSNS">—</div><div class="sum-lbl">SNS同意率</div></div>
+        </div>
+        <div class="report-card"><div class="report-ttl">満足度の分布</div><div id="starBars"></div></div>
+        <div class="report-card"><div class="report-ttl">改善ポイント（★4以下）</div><div id="improveRanking"></div></div>
+        <div class="report-card"><div class="report-ttl">カスタム質問の集計</div><div id="cqReport"></div></div>
+        <div class="report-card"><div class="report-ttl">今月のお声</div><div class="voice-scroll" id="voiceScroll"></div></div>
       </div>
-      <div class="btn-save-row">
-        <button class="btn-save" onclick="saveSettings()">設定を保存する</button>
-        <button class="btn-preview" onclick="previewCustomer()">プレビュー</button>
+    </div>
+
+    <div class="a-panel" id="panel-settings">
+      <div class="settings-body">
+        <div class="settings-section">
+          <div class="settings-section-ttl">ページ基本情報</div>
+          <div class="fixed-q">
+            <div class="s-in-row"><div class="s-in-lbl">ページタイトル</div><input class="s-in" id="cfgTitle" placeholder="今回の撮影はいかがでしたか？"></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-ttl">固定の設問</div>
+          <div class="fixed-q">
+            <div class="fixed-q-badge">★ 満足度</div>
+            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgStarLabel" placeholder="満足度を教えてください"></div>
+          </div>
+          <div class="fixed-q">
+            <div class="fixed-q-badge">改善ポイント（★4以下のみ表示）</div>
+            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgImproveLabel" placeholder="改善できる点はありましたか"></div>
+            <div class="s-in-row"><div class="s-in-lbl">選択肢（カンマ区切り）</div><input class="s-in" id="cfgImproveOpts" placeholder="スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間"></div>
+            <div class="s-in-row"><div class="s-in-lbl">詳細一言ラベル</div><input class="s-in" id="cfgImproveDetailLabel" placeholder="どのように改善できると思いますか"></div>
+            <div class="s-in-row"><div class="s-in-lbl">詳細一言サブテキスト</div><input class="s-in" id="cfgImproveDetailHint" placeholder="なくてもOKです"></div>
+          </div>
+          <div class="fixed-q">
+            <div class="fixed-q-badge">総合感想</div>
+            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgVoiceLabel" placeholder="今回の撮影全体を通して、いかがでしたか"></div>
+            <div class="s-in-row"><div class="s-in-lbl">サブテキスト</div><input class="s-in" id="cfgVoiceHint" placeholder="なくてもOKです"></div>
+          </div>
+          <div class="fixed-q">
+            <div class="fixed-q-badge">SNS同意</div>
+            <div class="s-in-row"><div class="s-in-lbl">メインテキスト</div><input class="s-in" id="cfgSNSMain" placeholder="SNSへの掲載に同意する"></div>
+            <div class="s-in-row"><div class="s-in-lbl">説明テキスト</div><input class="s-in" id="cfgSNSSub" placeholder="いただいたお声をInstagramなどで紹介させていただく場合があります。"></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-ttl">サンキューページ</div>
+          <div class="fixed-q">
+            <div class="s-in-row"><div class="s-in-lbl">タイトル（&lt;br&gt;で改行可）</div><input class="s-in" id="cfgThanksTitle" placeholder="受け取りました。&lt;br&gt;ありがとうございます。"></div>
+            <div class="s-in-row"><div class="s-in-lbl">SNS CTAタイトル</div><input class="s-in" id="cfgCTATitle" placeholder="これからご来店されるお客様の参考のために"></div>
+            <div class="s-in-row"><div class="s-in-lbl">SNS CTAメッセージ</div><input class="s-in" id="cfgCTAMsg" placeholder="撮影のご感想をInstagramに投稿していただけると…"></div>
+            <div class="s-in-row"><div class="s-in-lbl">SNSタグ</div><input class="s-in" id="cfgSNSTag" placeholder="@iliy_ai_life_familiy"></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-ttl">カスタム質問</div>
+          <div class="q-list" id="qList"></div>
+          <button class="btn-add-q" onclick="addQuestion()">＋ 質問を追加する</button>
+        </div>
+        <div class="btn-save-row">
+          <button class="btn-save" onclick="saveSettings()">設定を保存する</button>
+          <button class="btn-preview" onclick="previewCustomer()">プレビュー</button>
+        </div>
+        <div class="saved-msg" id="savedMsg">保存しました ✓</div>
       </div>
-      <div class="saved-msg" id="savedMsg">保存しました ✓</div>
     </div>
   </div>
 </div>
@@ -295,13 +457,11 @@ body { background: var(--night); font-family: 'Noto Sans JP', sans-serif; font-w
 <script>
 const PASS = '1234';
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzTuSBnnhlJ5I5uqttRCvchdNWqysorwgXnPq98lhoeA0yixbLeBvVkg8gsnaaeSnzY/exec';
-const CUSTOMER_URL = 'https://iliypicniko-hub.github.io/iliy-voice/';
 const COLORS = ['#ffffff','#c89a60','#8c6f50','#7a9870','#e07060','#6088a8','#a070a0'];
 const COLOR_NAMES = ['白','ゴールド','ブラウン','グリーン','レッド','ブルー','パープル'];
 
 const DEFAULTS = {
   title: '今回の撮影はいかがでしたか？',
-  sub: '',
   starLabel: '満足度を教えてください',
   improveLabel: '改善できる点はありましたか',
   improveOpts: 'スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間',
@@ -320,97 +480,253 @@ const DEFAULTS = {
 let cfg = load('iliy_cfg') || {};
 let voices = [];
 let customQs = load('iliy_questions') || [];
+let starVal = 0, improveSelected = [], cqAnswers = {}, snsOK = false;
+let curStep = 0, allSteps = [];
 let filterVal = 'all';
 let reportMonth = new Date(); reportMonth.setDate(1);
 
-function g(key) { return cfg[key] !== undefined ? cfg[key] : DEFAULTS[key]; }
+function g(key) { return (cfg[key] !== undefined && cfg[key] !== '') ? cfg[key] : DEFAULTS[key]; }
 
-// ── Login ──
-async function doLogin() {
-  if (document.getElementById('passIn').value === PASS) {
-    document.getElementById('adminLogin').style.display = 'none';
-    document.getElementById('adminDash').style.display = 'block';
-    document.getElementById('urlText').textContent = CUSTOMER_URL;
-    await loadVoices();
-    renderResponses(); renderReport(); renderSettings();
+// ── URL判定で画面を切り替え ──
+function init() {
+  const isStaff = location.search.includes('staff');
+  if (isStaff) {
+    document.getElementById('customerPage').classList.remove('active');
+    document.getElementById('adminPage').classList.add('active');
+    document.title = 'iliy — スタッフ管理画面';
   } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('passIn').value = '';
+    applyConfig();
+    buildSteps();
+    buildDots();
+    paintStars();
   }
 }
 
-// ── Load voices ──
-async function loadVoices() {
-  const el = document.getElementById('vList');
-  el.innerHTML = '<div class="v-empty">読み込み中…</div>';
-  try {
-    const res = await fetch(GAS_URL + '?t=' + Date.now());
-    voices = await res.json();
-    voices = voices.map(v => {
-      if (!v.month && v.date) {
-        const parts = v.date.split('/');
-        v.month = parts[0] + '-' + parts[1].padStart(2,'0');
-      }
-      return v;
-    });
-  } catch(e) { console.warn('読み込みエラー', e); voices = []; }
+// ── Config ──
+function applyConfig() {
+  document.getElementById('dispTitle').textContent = g('title');
+  document.getElementById('dispStarLabel').textContent = g('starLabel');
+  document.getElementById('dispImproveLabel').textContent = g('improveLabel');
+  document.getElementById('dispImproveDetailLabel').textContent = g('improveDetailLabel');
+  document.getElementById('dispImproveDetailHint').textContent = g('improveDetailHint');
+  document.getElementById('dispVoiceLabel').textContent = g('voiceLabel');
+  document.getElementById('dispVoiceHint').textContent = g('voiceHint');
+  document.getElementById('dispSNSMain').textContent = g('snsMain');
+  document.getElementById('dispSNSSub').textContent = g('snsSub');
+  document.getElementById('dispThanksTitle').innerHTML = g('thanksTitle');
+  document.getElementById('dispCTATitle').textContent = g('ctaTitle');
+  document.getElementById('dispCTAMsg').textContent = g('ctaMsg');
+  document.getElementById('dispSNSTag').textContent = g('snsTag');
+  const chips = document.getElementById('improveChips');
+  chips.innerHTML = g('improveOpts').split(',').map(o=>o.trim()).filter(Boolean).map(o=>
+    `<div class="chip" onclick="toggleChip(this,'${esc(o)}')">${esc(o)}</div>`).join('');
 }
 
-// ── Panel switch ──
-async function switchPanel(name, btn) {
+// ── Stars ──
+document.querySelectorAll('.star').forEach(s => {
+  s.onclick = () => { starVal = +s.dataset.v; paintStars(); document.getElementById('nextStep0').disabled = false; showImprove(); };
+  s.onmouseenter = () => { const v=+s.dataset.v; document.querySelectorAll('.star').forEach(x=>x.style.color=+x.dataset.v<=v?'var(--gold)':'var(--line2)'); };
+});
+document.getElementById('starRow').onmouseleave = paintStars;
+function paintStars() { document.querySelectorAll('.star').forEach(x=>{x.classList.toggle('on',+x.dataset.v<=starVal);x.style.color='';}); }
+
+function showImprove() {
+  const w = document.getElementById('improveWrap');
+  if (starVal>0&&starVal<=4) w.classList.add('show');
+  else { w.classList.remove('show'); improveSelected=[]; document.querySelectorAll('#improveChips .chip').forEach(c=>c.classList.remove('on')); }
+}
+
+function toggleChip(el, val) {
+  el.classList.toggle('on');
+  if (el.classList.contains('on')) improveSelected.push(val);
+  else improveSelected = improveSelected.filter(v=>v!==val);
+}
+
+// ── Steps ──
+function buildSteps() {
+  const wrap = document.getElementById('customStepsWrap');
+  wrap.innerHTML=''; allSteps=['step0'];
+  customQs.forEach((q,i)=>{
+    const id='stepCQ'+i; allSteps.push(id);
+    const div=document.createElement('div');
+    div.className='step'; div.id=id;
+    div.innerHTML=buildCQHtml(q,i);
+    wrap.appendChild(div);
+  });
+  allSteps.push('stepVoice','stepSNS');
+}
+
+function buildCQHtml(q, idx) {
+  const style=`${q.bold?'font-weight:500;':''}${q.color?'color:'+q.color+';':''}`;
+  let body='';
+  if (q.type==='single'||q.type==='multi') {
+    body='<div class="cq-opts">'+(q.options||[]).map((o,oi)=>
+      `<div class="cq-opt" onclick="selectCQOpt(this,${idx},${oi},'${q.type}')">
+        ${q.type==='single'?`<div class="cq-circle"><div class="cq-circle-inner"></div></div>`:`<div class="cq-check"></div>`}
+        <div class="cq-label">${esc(o)}</div>
+      </div>`).join('')+'</div>';
+  } else {
+    body=`<textarea class="cq-free" rows="3" placeholder="ご自由にお書きください" oninput="cqAnswers[${idx}]=this.value"></textarea>`;
+  }
+  return `<div class="card"><div class="cq-text" style="${style}">${esc(q.text)}</div>${q.hint?`<span class="cq-hint">${esc(q.hint)}</span>`:''}${body}</div>
+  <button class="btn-next" onclick="nextStep()">次へ</button>
+  <button class="btn-back" onclick="prevStep()">← 戻る</button>`;
+}
+
+function selectCQOpt(el, qIdx, oIdx, type) {
+  const parent=el.closest('.cq-opts');
+  if (type==='single') { parent.querySelectorAll('.cq-opt').forEach(o=>o.classList.remove('on')); el.classList.add('on'); cqAnswers[qIdx]=customQs[qIdx].options[oIdx]; }
+  else { el.classList.toggle('on'); cqAnswers[qIdx]=Array.from(parent.querySelectorAll('.cq-opt.on')).map(o=>o.querySelector('.cq-label').textContent); }
+}
+
+function buildDots() {
+  document.getElementById('dots').innerHTML=allSteps.map((_,i)=>`<div class="dot${i===0?' on':''}" id="dot${i}"></div>`).join('');
+}
+
+function showStep(n) {
+  allSteps.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el){el.classList.remove('active');if(i===n)el.classList.add('active');}
+    const d=document.getElementById('dot'+i);
+    if(d)d.classList.toggle('on',i===n);
+  });
+  curStep=n; window.scrollTo(0,0);
+}
+
+function nextStep(){if(curStep<allSteps.length-1)showStep(curStep+1);}
+function prevStep(){if(curStep>0)showStep(curStep-1);}
+
+// ── SNS ──
+function toggleSNS() {
+  snsOK=!snsOK;
+  document.getElementById('snsToggle').classList.toggle('on',snsOK);
+  document.getElementById('toggleBox').textContent=snsOK?'✓':'';
+}
+
+// ── Submit ──
+async function doSubmit() {
+  const btn=document.querySelector('#stepSNS .btn-next');
+  btn.disabled=true; btn.textContent='送信中…';
+  const now=new Date();
+  const entry={
+    id:Date.now(), date:fmt(now),
+    month:now.getFullYear()+'-'+pad(now.getMonth()+1),
+    star:starVal, improve:[...improveSelected],
+    improveText:document.getElementById('improveText').value.trim(),
+    cqAnswers:{...cqAnswers},
+    voice:document.getElementById('voiceText').value.trim(),
+    sns:snsOK
+  };
+  try {
+    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+  } catch(e){console.warn('送信エラー',e);}
+  launchPetals();
+  document.getElementById('customerPage').classList.remove('active');
+  document.getElementById('thanksPage').classList.add('active');
+  if(snsOK) document.getElementById('snsCTA').classList.add('show');
+}
+
+// ── Petals ──
+function launchPetals() {
+  const cv=document.getElementById('petalCanvas');
+  cv.style.display='block'; cv.width=innerWidth; cv.height=innerHeight;
+  const ctx=cv.getContext('2d');
+  const ps=Array.from({length:42},()=>({
+    x:Math.random()*innerWidth, y:-20-Math.random()*100,
+    r:5+Math.random()*8, vx:(Math.random()-.5)*2,
+    vy:1.6+Math.random()*2.4, rot:Math.random()*Math.PI*2,
+    vr:(Math.random()-.5)*.07, c:Math.random()>.5?'#e8c0a0':'#f0d8c8'
+  }));
+  let f=0;
+  (function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height); let alive=false;
+    ps.forEach(p=>{
+      p.x+=p.vx+Math.sin(f*.02+p.r)*.4; p.y+=p.vy; p.rot+=p.vr;
+      if(p.y<cv.height+20) alive=true;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha=Math.max(0,1-p.y/cv.height)*.8;
+      ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.ellipse(0,0,p.r,p.r*.55,0,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+    f++; if(alive) requestAnimationFrame(draw); else cv.style.display='none';
+  })();
+}
+
+// ── Admin ──
+async function doLogin() {
+  if (document.getElementById('passIn').value===PASS) {
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminDash').style.display='block';
+    const base=location.href.split('?')[0];
+    document.getElementById('urlText').textContent=base;
+    await loadVoices();
+    renderResponses(); renderReport(); renderSettings();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('passIn').value='';
+  }
+}
+
+async function loadVoices() {
+  document.getElementById('vList').innerHTML='<div class="v-empty">読み込み中…</div>';
+  try {
+    const res=await fetch(GAS_URL+'?t='+Date.now());
+    voices=await res.json();
+    voices=voices.map(v=>{
+      if(!v.month&&v.date){const p=v.date.split('/');v.month=p[0]+'-'+p[1].padStart(2,'0');}
+      return v;
+    });
+  } catch(e){console.warn('読み込みエラー',e);voices=[];}
+}
+
+async function switchPanel(name,btn) {
   document.querySelectorAll('.a-panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.a-nav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('panel-'+name).classList.add('on'); btn.classList.add('on');
-  if(name==='responses') { await loadVoices(); renderResponses(); }
-  if(name==='report') { await loadVoices(); renderReport(); }
+  if(name==='responses'){await loadVoices();renderResponses();}
+  if(name==='report'){await loadVoices();renderReport();}
   if(name==='settings') renderSettings();
 }
 
-// ── URL copy ──
 function copyURL() {
-  navigator.clipboard.writeText(CUSTOMER_URL).then(() => {
-    const btn = document.getElementById('urlCopyBtn');
-    btn.textContent = 'コピーしました ✓';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 2500);
+  const url=document.getElementById('urlText').textContent;
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=document.getElementById('urlCopyBtn');
+    btn.textContent='コピーしました ✓'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='コピー';btn.classList.remove('copied');},2500);
   });
 }
 
-// ── Preview ──
 function previewCustomer() {
   saveSettings();
-  window.open(CUSTOMER_URL, '_blank');
+  window.open(location.href.split('?')[0],'_blank');
 }
 
-// ── Responses ──
-function setFilter(v,btn) { filterVal=v; document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on')); btn.classList.add('on'); renderResponses(); }
+function setFilter(v,btn){filterVal=v;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderResponses();}
 
 function renderResponses() {
-  document.getElementById('sTot').textContent = voices.length;
-  const starred = voices.filter(v=>v.star>0);
-  document.getElementById('sAvg').textContent = starred.length?(starred.reduce((s,v)=>s+v.star,0)/starred.length).toFixed(1):'—';
-  const snsC = voices.filter(v=>v.sns).length;
-  document.getElementById('sSNS').textContent = voices.length?Math.round(snsC/voices.length*100)+'%':'—';
-  let list = voices;
+  document.getElementById('sTot').textContent=voices.length;
+  const starred=voices.filter(v=>v.star>0);
+  document.getElementById('sAvg').textContent=starred.length?(starred.reduce((s,v)=>s+v.star,0)/starred.length).toFixed(1):'—';
+  const snsC=voices.filter(v=>v.sns).length;
+  document.getElementById('sSNS').textContent=voices.length?Math.round(snsC/voices.length*100)+'%':'—';
+  let list=voices;
   if(filterVal===5) list=voices.filter(v=>v.star===5);
   else if(filterVal===4) list=voices.filter(v=>v.star>=4);
   else if(filterVal==='low') list=voices.filter(v=>v.star>0&&v.star<=3);
   else if(filterVal==='sns') list=voices.filter(v=>v.sns);
-  const el = document.getElementById('vList');
+  const el=document.getElementById('vList');
   if(!list.length){el.innerHTML='<div class="v-empty">まだ回答がありません。</div>';return;}
-  el.innerHTML = list.map((v,i)=>{
-    const cqHtml = Object.keys(v.cqAnswers||{}).map(k=>{
-      const q=customQs[+k]; if(!q) return '';
+  el.innerHTML=list.map((v,i)=>{
+    const cqHtml=Object.keys(v.cqAnswers||{}).map(k=>{
+      const q=customQs[+k];if(!q)return'';
       const ans=Array.isArray(v.cqAnswers[k])?v.cqAnswers[k].join('、'):v.cqAnswers[k];
       return `<div class="v-section-lbl">${esc(q.text)}</div><div class="v-text">${esc(ans)}</div>`;
     }).join('');
     return `<div class="v-card" style="animation-delay:${i*.04}s">
-      <div class="v-head">
-        <div class="v-date">${v.date}</div>
-        <div class="v-right">
-          ${v.star?`<div class="v-stars">${'★'.repeat(v.star)}${'☆'.repeat(5-v.star)}</div>`:''}
-          ${v.sns?'<div class="sns-badge">SNS可</div>':''}
-        </div>
+      <div class="v-head"><div class="v-date">${v.date}</div>
+        <div class="v-right">${v.star?`<div class="v-stars">${'★'.repeat(v.star)}${'☆'.repeat(5-v.star)}</div>`:''}${v.sns?'<div class="sns-badge">SNS可</div>':''}</div>
       </div>
       ${v.improve?.length?`<div class="v-section"><div class="v-section-lbl">改善ポイント</div><div class="v-tags">${v.improve.map(t=>`<div class="v-tag">${esc(t)}</div>`).join('')}</div></div>`:''}
       ${v.improveText?`<div class="v-section"><div class="v-section-lbl">改善の詳細</div><div class="v-text">${esc(v.improveText)}</div></div>`:''}
@@ -420,11 +736,11 @@ function renderResponses() {
   }).join('');
 }
 
-// ── Report ──
 function changeMonth(d){reportMonth.setMonth(reportMonth.getMonth()+d);renderReport();}
+
 function renderReport() {
-  const y=reportMonth.getFullYear(), m=pad(reportMonth.getMonth()+1), key=y+'-'+m;
-  document.getElementById('monthLabel').textContent = y+'年 '+(reportMonth.getMonth()+1)+'月';
+  const y=reportMonth.getFullYear(),m=pad(reportMonth.getMonth()+1),key=y+'-'+m;
+  document.getElementById('monthLabel').textContent=y+'年 '+(reportMonth.getMonth()+1)+'月';
   const mv=voices.filter(v=>v.month===key);
   document.getElementById('rTot').textContent=mv.length;
   const starred=mv.filter(v=>v.star>0);
@@ -444,7 +760,7 @@ function renderReport() {
     :'<div style="font-size:13px;color:rgba(255,255,255,.25);padding:10px 0;">該当なし</div>';
   let cqHtml='';
   customQs.forEach((q,qi)=>{
-    if(q.type==='free') return;
+    if(q.type==='free')return;
     const counts={};(q.options||[]).forEach(o=>counts[o]=0);
     mv.forEach(v=>{const ans=v.cqAnswers?.[qi];if(!ans)return;(Array.isArray(ans)?ans:[ans]).forEach(a=>{if(counts[a]!==undefined)counts[a]++;});});
     const total=Object.values(counts).reduce((a,b)=>a+b,0)||1;
@@ -457,25 +773,23 @@ function renderReport() {
     :'<div style="font-size:13px;color:rgba(255,255,255,.25);padding:10px 0;">お声なし</div>';
 }
 
-// ── Settings ──
 function renderSettings() {
-  const fields = {cfgTitle:'title',cfgSub:'sub',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
-  Object.entries(fields).forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.value=g(key); });
-  document.getElementById('qList').innerHTML = customQs.map((q,i)=>buildQEditor(q,i)).join('');
+  const fields={cfgTitle:'title',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
+  Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=g(key);});
+  document.getElementById('qList').innerHTML=customQs.map((q,i)=>buildQEditor(q,i)).join('');
 }
 
-function buildQEditor(q, i) {
-  const colSwatches = COLORS.map((c,ci)=>`<div class="color-swatch${q.color===c?' on':''}" style="background:${c}" title="${COLOR_NAMES[ci]}" onclick="setQColor(${i},'${c}',this)"></div>`).join('');
-  const optsHtml = (q.type==='single'||q.type==='multi')
-    ? `<div class="q-opts-edit">${(q.options||[]).map((o,oi)=>`<div class="q-opt-in-row"><input class="q-opt-in" value="${esc(o)}" oninput="customQs[${i}].options[${oi}]=this.value" placeholder="選択肢 ${oi+1}"><button class="btn-del-opt" onclick="delOpt(${i},${oi})">×</button></div>`).join('')}<button class="btn-add-opt" onclick="addOpt(${i})">＋ 選択肢を追加</button></div>` : '';
-  return `<div class="q-item"><div class="q-item-head"><input class="q-text-in" value="${esc(q.text)}" oninput="customQs[${i}].text=this.value" placeholder="質問文を入力"><button class="btn-del-q" onclick="delQuestion(${i})">×</button></div><input class="q-sub-in" value="${esc(q.hint||'')} " oninput="customQs[${i}].hint=this.value" placeholder="サブテキスト（なくてもOKです など）"><div class="q-controls"><select class="q-type-select" onchange="changeQType(${i},this.value)"><option value="single"${q.type==='single'?' selected':''}>一択</option><option value="multi"${q.type==='multi'?' selected':''}>複数選択</option><option value="free"${q.type==='free'?' selected':''}>自由記述</option></select><button class="style-btn${q.bold?' on':''}" onclick="toggleBold(${i},this)"><b>B</b></button><div class="color-row">${colSwatches}</div></div>${optsHtml}</div>`;
+function buildQEditor(q,i) {
+  const colSwatches=COLORS.map((c,ci)=>`<div class="color-swatch${q.color===c?' on':''}" style="background:${c}" title="${COLOR_NAMES[ci]}" onclick="setQColor(${i},'${c}',this)"></div>`).join('');
+  const optsHtml=(q.type==='single'||q.type==='multi')
+    ?`<div class="q-opts-edit">${(q.options||[]).map((o,oi)=>`<div class="q-opt-in-row"><input class="q-opt-in" value="${esc(o)}" oninput="customQs[${i}].options[${oi}]=this.value" placeholder="選択肢 ${oi+1}"><button class="btn-del-opt" onclick="delOpt(${i},${oi})">×</button></div>`).join('')}<button class="btn-add-opt" onclick="addOpt(${i})">＋ 選択肢を追加</button></div>`:'' ;
+  return `<div class="q-item"><div class="q-item-head"><input class="q-text-in" value="${esc(q.text)}" oninput="customQs[${i}].text=this.value" placeholder="質問文を入力"><button class="btn-del-q" onclick="delQuestion(${i})">×</button></div><input class="q-sub-in" value="${esc(q.hint||'')}" oninput="customQs[${i}].hint=this.value" placeholder="サブテキスト（なくてもOKです など）"><div class="q-controls"><select class="q-type-select" onchange="changeQType(${i},this.value)"><option value="single"${q.type==='single'?' selected':''}>一択</option><option value="multi"${q.type==='multi'?' selected':''}>複数選択</option><option value="free"${q.type==='free'?' selected':''}>自由記述</option></select><button class="style-btn${q.bold?' on':''}" onclick="toggleBold(${i},this)"><b>B</b></button><div class="color-row">${colSwatches}</div></div>${optsHtml}</div>`;
 }
 
 function saveSettings() {
-  const fields = {cfgTitle:'title',cfgSub:'sub',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
-  Object.entries(fields).forEach(([id,key])=>{ const el=document.getElementById(id); if(el) cfg[key]=el.value; });
-  save('iliy_cfg', cfg);
-  save('iliy_questions', customQs);
+  const fields={cfgTitle:'title',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
+  Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)cfg[key]=el.value;});
+  save('iliy_cfg',cfg); save('iliy_questions',customQs);
   document.getElementById('savedMsg').style.display='block';
   setTimeout(()=>document.getElementById('savedMsg').style.display='none',2000);
 }
@@ -490,8 +804,11 @@ function delOpt(i,oi){customQs[i].options.splice(oi,1);renderSettings();}
 
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function load(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
+function fmt(d){return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate());}
 function pad(n){return String(n).padStart(2,'0');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+init();
 </script>
 </body>
 </html>
