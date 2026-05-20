@@ -108,7 +108,8 @@ body { background: var(--bg); font-family: 'Noto Sans JP', sans-serif; font-weig
 /* ══════════════════════
    THANKS
 ══════════════════════ */
-#thanksPage { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+#thanksPage { min-height: 100vh; align-items: center; justify-content: center; background: var(--bg); }
+#thanksPage.active { display: flex; }
 .thanks-wrap { text-align: center; padding: 60px 30px; max-width: 380px; animation: fadeUp .8s ease both; }
 .thanks-icon { font-size: 52px; display: block; margin-bottom: 28px; animation: heartpop .6s .2s ease both; opacity: 0; }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
@@ -342,7 +343,7 @@ body { background: var(--bg); font-family: 'Noto Sans JP', sans-serif; font-weig
   <div class="thanks-wrap">
     <span class="thanks-icon">🌸</span>
     <div class="thanks-title" id="dispThanksTitle">ありがとうございます。<br>大切に読みます。</div>
-    <p class="thanks-msg" id="dispThanksMsg">あなたの言葉が、<br>スタジオのスタッフの明日の力になります。<br>またいつでも、お待ちしています。</p>
+    <p class="thanks-msg" id="dispThanksMsg" style="display:none;">あなたの言葉が、<br>スタジオのスタッフの明日の力になります。<br>またいつでも、お待ちしています。</p>
     <div class="sns-cta" id="snsCTA">
       <div class="sns-cta-ttl" id="dispCTATitle">これからご来店されるお客様の参考のために</div>
       <p class="sns-cta-msg" id="dispCTAMsg">撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。</p>
@@ -666,6 +667,7 @@ async function doSubmit() {
     });
   } catch(e) { console.warn('送信エラー', e); }
 
+  document.querySelector('.staff-btn').style.display = 'none';
   launchPetals();
   document.getElementById('customerPage').classList.remove('active');
   document.getElementById('thanksPage').classList.add('active');
