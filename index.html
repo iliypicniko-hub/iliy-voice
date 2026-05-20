@@ -328,7 +328,7 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
     <div class="sns-cta" id="snsCTA">
       <div class="sns-cta-ttl" id="dispCTATitle">これからご来店されるお客様の参考のために</div>
       <p class="sns-cta-msg" id="dispCTAMsg">撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。</p>
-      <span class="sns-tag" id="dispSNSTag">@iliy_ai_life_familiy</span>
+      <a class="sns-tag" id="dispSNSTag" href="https://www.instagram.com/iliy_ai_life_familiy/" target="_blank" style="text-decoration:none;">@iliy_ai_life_familiy</a>
     </div>
   </div>
 </div>
@@ -673,8 +673,10 @@ async function loadVoices() {
   try {
     const res=await fetch(GAS_URL+'?t='+Date.now());
     voices=await res.json();
-    voices=voices.map(v=>{
-      if(!v.month&&v.date){const p=v.date.split('/');v.month=p[0]+'-'+p[1].padStart(2,'0');}
+    voices=voices.filter(v=>v&&v.date).map(v=>{
+      if(!v.month&&v.date){
+        try{const p=v.date.toString().split('/');v.month=p[0]+'-'+(p[1]||'01').padStart(2,'0');}catch(e){}
+      }
       return v;
     });
   } catch(e){console.warn('読み込みエラー',e);voices=[];}
