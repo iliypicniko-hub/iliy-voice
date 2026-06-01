@@ -257,6 +257,10 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
+.lang-toggle { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-bottom: 20px; }
+.lang-btn { background: transparent; border: none; font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .2em; color: var(--line2); cursor: pointer; padding: 4px 6px; transition: all .2s; }
+.lang-btn.active { color: var(--accent); border-bottom: 1px solid var(--accent); }
+.lang-sep { color: var(--line2); font-size: 11px; }
 </style>
 </head>
 <body>
@@ -271,6 +275,11 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
       <p class="c-sub" id="dispSub" style="display:none;"></p>
     </div>
 
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="langJP" onclick="setLang('ja')">JP</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
+    </div>
     <div class="dots" id="dots"></div>
 
     <div class="step active" id="step0">
@@ -833,6 +842,83 @@ function load(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return
 function fmt(d){return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate());}
 function pad(n){return String(n).padStart(2,'0');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+
+const LANG = {
+  ja: {
+    title: '今回の撮影はいかがでしたか？',
+    starLabel: '満足度を教えてください',
+    improveLabel: '改善できる点はありましたか',
+    improveOpts: 'スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間',
+    improveDetailLabel: 'どのように改善できると思いますか',
+    improveDetailHint: 'なくてもOKです',
+    improveDetailPlaceholder: '例：もう少し撮影時間に余裕があると、子どもがリラックスできたかもしれません。',
+    voiceLabel: '今回の撮影全体を通して、いかがでしたか',
+    voiceHint: 'なくてもOKです',
+    voicePlaceholder: 'ご自由にお書きください',
+    snsMain: 'SNSへの排載に同意する',
+    snsSub: 'いただいたお声をInstagramなどで紹介させていただく場合があります。お名前は排載しません。',
+    btnNext: '次へ',
+    btnBack: '← 戻る',
+    btnSubmit: '送信する',
+    thanksTitle: '受け取りました。<br>ありがとうございます。',
+    ctaTitle: 'これからご来店されるお客様の参考のために',
+    ctaMsg: '撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。',
+  },
+  en: {
+    title: 'How was your photo session?',
+    starLabel: 'Please rate your experience',
+    improveLabel: 'What could we improve?',
+    improveOpts: 'Staff service,Shooting time,Studio facilities,Photo quality,Booking & guidance,Pricing,Waiting time',
+    improveDetailLabel: 'How could we improve?',
+    improveDetailHint: 'Optional',
+    improveDetailPlaceholder: 'e.g. A little more time would have helped our child relax.',
+    voiceLabel: 'Overall, how was your experience?',
+    voiceHint: 'Optional',
+    voicePlaceholder: 'Feel free to share your thoughts.',
+    snsMain: 'I agree to be featured on SNS',
+    snsSub: 'Your comments may be shared on Instagram. Your name will not be shown.',
+    btnNext: 'Next',
+    btnBack: 'Back',
+    btnSubmit: 'Submit',
+    thanksTitle: 'Thank you so much.<br>We'll read every word.',
+    ctaTitle: 'For families visiting iliy in the future',
+    ctaMsg: 'Sharing your experience on Instagram helps other families decide. Feel free to tag us!',
+  }
+};
+
+let currentLang = 'ja';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('langJP').classList.toggle('active', lang === 'ja');
+  document.getElementById('langEN').classList.toggle('active', lang === 'en');
+  const L = LANG[lang];
+  document.getElementById('dispTitle').textContent = lang === 'ja' ? g('title') : L.title;
+  document.getElementById('dispStarLabel').textContent = lang === 'ja' ? g('starLabel') : L.starLabel;
+  document.getElementById('dispImproveLabel').textContent = lang === 'ja' ? g('improveLabel') : L.improveLabel;
+  document.getElementById('dispImproveDetailLabel').textContent = lang === 'ja' ? g('improveDetailLabel') : L.improveDetailLabel;
+  document.getElementById('dispImproveDetailHint').textContent = lang === 'ja' ? g('improveDetailHint') : L.improveDetailHint;
+  document.getElementById('improveText').placeholder = L.improveDetailPlaceholder;
+  document.getElementById('dispVoiceLabel').textContent = lang === 'ja' ? g('voiceLabel') : L.voiceLabel;
+  document.getElementById('dispVoiceHint').textContent = lang === 'ja' ? g('voiceHint') : L.voiceHint;
+  document.getElementById('voiceText').placeholder = L.voicePlaceholder;
+  document.getElementById('dispSNSMain').textContent = lang === 'ja' ? g('snsMain') : L.snsMain;
+  document.getElementById('dispSNSSub').textContent = lang === 'ja' ? g('snsSub') : L.snsSub;
+  document.getElementById('dispThanksTitle').innerHTML = lang === 'ja' ? g('thanksTitle') : L.thanksTitle;
+  document.getElementById('dispCTATitle').textContent = lang === 'ja' ? g('ctaTitle') : L.ctaTitle;
+  document.getElementById('dispCTAMsg').textContent = lang === 'ja' ? g('ctaMsg') : L.ctaMsg;
+  const chips = document.getElementById('improveChips');
+  chips.innerHTML = L.improveOpts.split(',').map(o => o.trim()).filter(Boolean).map(o =>
+    '<div class="chip" onclick="toggleChip(this,'' + esc(o) + '')">' + esc(o) + '</div>'
+  ).join('');
+  improveSelected = [];
+  document.querySelectorAll('.btn-next').forEach(b => {
+    if (b.getAttribute('onclick') === 'doSubmit()') b.textContent = L.btnSubmit;
+    else b.textContent = L.btnNext;
+  });
+  document.querySelectorAll('.btn-back').forEach(b => b.textContent = L.btnBack);
+}
 
 init();
 </script>
