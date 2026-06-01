@@ -23,56 +23,49 @@
   --night: #141210;
   --night2: #1e1a16;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
-
 #petalCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; display: none; }
-
 .screen { display: none; }
 .screen.active { display: block; }
-
-/* ══════════════════════
-   CUSTOMER
-══════════════════════ */
 #customerPage { background: var(--bg); min-height: 100vh; }
 #thanksPage { background: var(--bg); min-height: 100vh; align-items: center; justify-content: center; }
 #thanksPage.active { display: flex; }
+#adminPage { background: var(--night); min-height: 100vh; }
 
+/* ── Lang toggle ── */
+.lang-toggle { display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 20px 22px 0; max-width: 440px; margin: 0 auto; }
+.lang-btn { background: transparent; border: none; font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .2em; color: var(--line2); cursor: pointer; padding: 4px 6px; transition: all .2s; }
+.lang-btn.active { color: var(--accent); border-bottom: 1px solid var(--accent); }
+.lang-sep { color: var(--line2); font-size: 11px; }
+
+/* ── Customer ── */
 .c-wrap { max-width: 440px; margin: 0 auto; padding: 0 22px 100px; }
-.c-hero { text-align: center; padding: 60px 0 44px; animation: fadeUp .8s ease both; }
+.c-hero { text-align: center; padding: 40px 0 44px; animation: fadeUp .8s ease both; }
 .c-logo { font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: .45em; color: var(--accent); margin-bottom: 22px; text-transform: uppercase; }
-.c-title { font-family: 'Cormorant Garamond', serif; font-size: 27px; font-weight: 300; line-height: 1.4; letter-spacing: .06em; white-space: nowrap; color: #3d2a1a; }
-.c-sub { margin-top: 13px; font-size: 12.5px; color: var(--light); line-height: 2; letter-spacing: .04em; }
-
+.c-title { font-family: 'Cormorant Garamond', serif; font-size: 27px; font-weight: 300; line-height: 1.4; letter-spacing: .06em; color: #3d2a1a; }
 .dots { display: flex; justify-content: center; gap: 7px; margin-bottom: 34px; }
 .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--line2); transition: all .3s; }
 .dot.on { background: var(--accent); transform: scale(1.4); }
-
 .step { display: none; }
 .step.active { display: block; animation: fadeUp .45s ease both; }
-
 .card { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 24px 20px; margin-bottom: 14px; }
 .f-label { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400; letter-spacing: .14em; color: var(--accent); display: block; margin-bottom: 4px; }
-.f-hint { display: block; font-size: 11px; color: var(--light); letter-spacing: .03em; margin-bottom: 14px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; margin-top: 4px; }
-
+.f-hint { display: block; font-size: 11px; color: var(--light); letter-spacing: .03em; margin-bottom: 14px; font-weight: 300; margin-top: 4px; }
 .star-row { display: flex; gap: 5px; justify-content: center; padding: 6px 0; }
 .star { font-size: 40px; cursor: pointer; color: var(--line2); transition: color .12s, transform .14s; user-select: none; line-height: 1; }
 .star.on { color: var(--gold); transform: scale(1.1); }
-
 .improve-wrap { display: none; }
 .improve-wrap.show { display: block; animation: fadeUp .4s ease both; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-.chip { background: var(--off); border: 1.5px solid var(--line); border-radius: 40px; padding: 8px 15px; font-size: 13px; color: var(--text); cursor: pointer; transition: all .17s; letter-spacing: .02em; }
+.chip { background: var(--off); border: 1.5px solid var(--line); border-radius: 40px; padding: 8px 15px; font-size: 13px; color: var(--text); cursor: pointer; transition: all .17s; }
 .chip:hover { border-color: var(--accent); color: var(--accent); }
 .chip.on { background: var(--accent); border-color: var(--accent); color: white; }
-
 .f-textarea { width: 100%; background: var(--off); border: 1.5px solid var(--line); border-radius: 12px; padding: 15px 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.9; resize: none; outline: none; transition: border-color .2s; }
 .f-textarea:focus { border-color: var(--accent); }
 .f-textarea::placeholder { color: #c4bbb0; font-size: 13px; line-height: 2; }
 .char-hint { text-align: right; font-size: 11px; color: var(--light); margin-top: 6px; }
-
-.cq-text { font-size: 14px; color: var(--text); line-height: 1.8; letter-spacing: .03em; margin-bottom: 4px; }
+.cq-text { font-size: 14px; color: var(--text); line-height: 1.8; margin-bottom: 4px; }
 .cq-hint { display: block; font-size: 11px; color: var(--light); margin-bottom: 14px; font-weight: 300; }
 .cq-opts { display: flex; flex-direction: column; gap: 9px; }
 .cq-opt { background: var(--off); border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 16px; cursor: pointer; transition: all .17s; display: flex; align-items: center; gap: 12px; }
@@ -88,34 +81,28 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .cq-free { width: 100%; background: var(--off); border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 300; color: var(--text); line-height: 1.8; resize: none; outline: none; min-height: 90px; transition: border-color .2s; }
 .cq-free:focus { border-color: var(--accent); }
 .cq-free::placeholder { color: #c4bbb0; font-size: 13px; }
-
 .sns-toggle { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; transition: all .2s; margin-bottom: 14px; }
 .sns-toggle.on { border-color: var(--sage); background: var(--sage-bg); }
 .toggle-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--line2); flex-shrink: 0; margin-top: 1px; transition: all .17s; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; }
 .sns-toggle.on .toggle-box { border-color: var(--sage); background: var(--sage); }
 .sns-main { font-size: 14px; color: var(--text); line-height: 1.6; }
 .sns-sub { font-size: 11px; color: var(--light); margin-top: 4px; line-height: 1.7; }
-
 .btn-next { width: 100%; background: var(--text); color: white; border: none; border-radius: 50px; padding: 17px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; letter-spacing: .22em; cursor: pointer; transition: all .25s; margin-top: 6px; }
 .btn-next:hover:not(:disabled) { background: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(140,111,80,.28); }
 .btn-next:disabled { opacity: .35; cursor: not-allowed; }
 .btn-back { width: 100%; background: transparent; color: var(--light); border: 1px solid var(--line); border-radius: 50px; padding: 12px; font-size: 12px; letter-spacing: .08em; cursor: pointer; transition: all .2s; margin-top: 8px; }
 .btn-back:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Thanks */
+/* ── Thanks ── */
 .thanks-wrap { text-align: center; padding: 60px 30px; max-width: 380px; animation: fadeUp .8s ease both; }
 .thanks-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300; line-height: 1.8; letter-spacing: .06em; color: var(--text); margin-bottom: 24px; }
 .sns-cta { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 22px 20px; text-align: left; display: none; }
 .sns-cta.show { display: block; animation: fadeUp .5s .3s ease both; opacity: 0; animation-fill-mode: both; }
-.sns-cta-ttl { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 400; letter-spacing: .06em; color: var(--text); margin-bottom: 10px; line-height: 1.7; }
+.sns-cta-ttl { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 400; color: var(--text); margin-bottom: 10px; line-height: 1.7; }
 .sns-cta-msg { font-size: 12.5px; color: var(--mid); line-height: 1.9; margin-bottom: 14px; }
-.sns-tag { display: inline-block; background: var(--accent-bg); color: var(--accent); border-radius: 8px; padding: 7px 14px; font-size: 13.5px; letter-spacing: .02em; }
+.sns-tag { display: inline-block; background: var(--accent-bg); color: var(--accent); border-radius: 8px; padding: 7px 14px; font-size: 13.5px; text-decoration: none; }
 
-/* ══════════════════════
-   ADMIN
-══════════════════════ */
-#adminPage { background: var(--night); min-height: 100vh; }
-
+/* ── Admin ── */
 .a-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
 .login-box { text-align: center; width: 100%; max-width: 300px; }
 .login-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .4em; color: rgba(200,160,100,.6); margin-bottom: 32px; }
@@ -124,22 +111,18 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .btn-login { width: 100%; background: var(--accent); color: white; border: none; border-radius: 50px; padding: 14px; font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: .2em; cursor: pointer; transition: opacity .2s; }
 .btn-login:hover { opacity: .85; }
 .login-err { font-size: 12px; color: #e0a880; margin-top: 12px; display: none; }
-
 .a-nav { display: flex; background: var(--night2); border-bottom: 1px solid rgba(255,255,255,.06); position: sticky; top: 0; z-index: 20; }
 .a-nav-btn { flex: 1; padding: 16px 8px; background: transparent; border: none; font-size: 12px; letter-spacing: .08em; color: rgba(255,255,255,.35); cursor: pointer; transition: all .2s; font-family: 'Noto Sans JP', sans-serif; border-bottom: 2px solid transparent; }
 .a-nav-btn.on { color: rgba(200,160,100,.9); border-bottom-color: rgba(200,160,100,.7); }
-
 .a-panel { display: none; }
 .a-panel.on { display: block; }
-
 .url-bar { background: rgba(255,255,255,.03); border-bottom: 1px solid rgba(255,255,255,.06); padding: 14px 18px; max-width: 640px; margin: 0 auto; }
 .url-label { font-size: 10px; letter-spacing: .18em; color: rgba(200,150,90,.6); margin-bottom: 8px; }
 .url-row { display: flex; align-items: center; gap: 10px; }
-.url-text { flex: 1; font-size: 12px; color: rgba(255,255,255,.5); letter-spacing: .02em; word-break: break-all; font-family: monospace; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 8px 12px; }
+.url-text { flex: 1; font-size: 12px; color: rgba(255,255,255,.5); font-family: monospace; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 8px 12px; }
 .url-copy-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; cursor: pointer; transition: opacity .2s; white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; }
 .url-copy-btn:hover { opacity: .85; }
 .url-copy-btn.copied { background: var(--sage); }
-
 .a-header-bar { padding: 18px 18px 0; display: flex; align-items: center; justify-content: space-between; max-width: 640px; margin: 0 auto; }
 .a-brand { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .25em; color: rgba(200,150,90,.65); }
 .a-stats { display: flex; gap: 20px; }
@@ -147,12 +130,13 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .a-num { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: white; line-height: 1; }
 .a-lbl { font-size: 10px; color: rgba(255,255,255,.25); letter-spacing: .08em; margin-top: 3px; }
 .a-body { padding: 16px 16px 60px; max-width: 640px; margin: 0 auto; }
-
-.f-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+.f-chips-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.f-chips { display: flex; gap: 7px; flex-wrap: wrap; }
 .f-chip { background: transparent; border: 1px solid rgba(255,255,255,.1); border-radius: 40px; padding: 5px 14px; font-size: 12px; color: rgba(255,255,255,.36); cursor: pointer; transition: all .18s; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; }
 .f-chip:hover { border-color: rgba(200,150,90,.6); color: rgba(200,150,90,.8); }
 .f-chip.on { border-color: rgba(200,150,90,.7); color: rgba(200,150,90,.9); background: rgba(200,150,90,.08); }
-
+.refresh-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,.45); cursor: pointer; transition: all .2s; white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; }
+.refresh-btn:hover { background: rgba(255,255,255,.12); color: white; }
 .v-list { display: flex; flex-direction: column; gap: 11px; }
 .v-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); border-radius: 14px; padding: 17px 18px; transition: all .2s; animation: fadeUp .4s ease both; position: relative; overflow: hidden; }
 .v-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--gold)); opacity: 0; transition: opacity .2s; }
@@ -169,7 +153,6 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .v-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .v-tag { font-size: 11px; background: rgba(140,111,80,.15); color: rgba(200,160,110,.8); border-radius: 20px; padding: 3px 10px; }
 .v-empty { text-align: center; padding: 70px 20px; color: rgba(255,255,255,.16); font-size: 13px; line-height: 2.3; }
-
 .report-body { padding: 16px 16px 60px; max-width: 640px; margin: 0 auto; }
 .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .month-label { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: white; letter-spacing: .06em; }
@@ -204,7 +187,6 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .voice-quote { background: rgba(255,255,255,.03); border-left: 2px solid rgba(140,111,80,.4); padding: 12px 14px; border-radius: 0 10px 10px 0; }
 .voice-quote-text { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.9; }
 .voice-quote-meta { font-size: 11px; color: rgba(255,255,255,.22); margin-top: 6px; }
-
 .settings-body { padding: 16px 16px 80px; max-width: 600px; margin: 0 auto; }
 .settings-section { margin-bottom: 28px; }
 .settings-section-ttl { font-size: 11px; letter-spacing: .2em; color: rgba(200,150,90,.7); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.06); }
@@ -249,39 +231,26 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .btn-preview { background: rgba(200,150,90,.15); color: rgba(200,150,90,.9); border: 1px solid rgba(200,150,90,.3); border-radius: 50px; padding: 15px 20px; font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: .1em; cursor: pointer; transition: all .2s; white-space: nowrap; }
 .btn-preview:hover { background: rgba(200,150,90,.25); }
 .saved-msg { text-align: center; font-size: 12px; color: rgba(122,152,112,.8); margin-top: 10px; display: none; }
-.f-chips-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.f-chips-row .f-chips { margin-bottom: 0; }
-.refresh-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,.45); cursor: pointer; transition: all .2s; white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; }
-.refresh-btn:hover { background: rgba(255,255,255,.12); color: white; }
-.refresh-btn.loading { opacity: .5; cursor: not-allowed; }
-
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
-.lang-toggle { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-bottom: 20px; }
-.lang-btn { background: transparent; border: none; font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: .2em; color: var(--line2); cursor: pointer; padding: 4px 6px; transition: all .2s; }
-.lang-btn.active { color: var(--accent); border-bottom: 1px solid var(--accent); }
-.lang-sep { color: var(--line2); font-size: 11px; }
 </style>
 </head>
 <body>
 <canvas id="petalCanvas"></canvas>
 
-<!-- ═══════════════════ CUSTOMER ═══════════════════ -->
+<!-- CUSTOMER -->
 <div id="customerPage" class="screen active">
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="langJP" onclick="setLang('ja')">JP</button>
+    <span class="lang-sep">|</span>
+    <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
+  </div>
   <div class="c-wrap">
     <div class="c-hero">
-      <div class="c-logo" id="dispLogo">iliy photo studio</div>
+      <div class="c-logo">iliy photo studio</div>
       <h1 class="c-title" id="dispTitle">今回の撮影はいかがでしたか？</h1>
-      <p class="c-sub" id="dispSub" style="display:none;"></p>
-    </div>
-
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="langJP" onclick="setLang('ja')">JP</button>
-      <span class="lang-sep">|</span>
-      <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
     </div>
     <div class="dots" id="dots"></div>
-
     <div class="step active" id="step0">
       <div class="card">
         <label class="f-label" id="dispStarLabel">満足度を教えてください</label>
@@ -307,9 +276,7 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
       </div>
       <button class="btn-next" id="nextStep0" onclick="nextStep()" disabled>次へ</button>
     </div>
-
     <div id="customStepsWrap"></div>
-
     <div class="step" id="stepVoice">
       <div class="card">
         <label class="f-label" id="dispVoiceLabel">今回の撮影全体を通して、いかがでしたか</label>
@@ -317,10 +284,9 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
         <textarea class="f-textarea" id="voiceText" style="min-height:160px;" placeholder="ご自由にお書きください" maxlength="500" oninput="document.getElementById('voiceCnt').textContent=this.value.length"></textarea>
         <div class="char-hint"><span id="voiceCnt">0</span> / 500</div>
       </div>
-      <button class="btn-next" onclick="nextStep()">次へ</button>
-      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+      <button class="btn-next" id="btnNext2" onclick="nextStep()">次へ</button>
+      <button class="btn-back" id="btnBack2" onclick="prevStep()">← 戻る</button>
     </div>
-
     <div class="step" id="stepSNS">
       <div class="sns-toggle" id="snsToggle" onclick="toggleSNS()">
         <div class="toggle-box" id="toggleBox"></div>
@@ -329,25 +295,25 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
           <div class="sns-sub" id="dispSNSSub">いただいたお声をInstagramなどで紹介させていただく場合があります。お名前は掲載しません。</div>
         </div>
       </div>
-      <button class="btn-next" onclick="doSubmit()">送信する</button>
-      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+      <button class="btn-next" id="btnSubmit" onclick="doSubmit()">送信する</button>
+      <button class="btn-back" id="btnBack3" onclick="prevStep()">← 戻る</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════ THANKS ═══════════════════ -->
+<!-- THANKS -->
 <div id="thanksPage" class="screen">
   <div class="thanks-wrap">
     <div class="thanks-title" id="dispThanksTitle">受け取りました。<br>ありがとうございます。</div>
     <div class="sns-cta" id="snsCTA">
       <div class="sns-cta-ttl" id="dispCTATitle">これからご来店されるお客様の参考のために</div>
       <p class="sns-cta-msg" id="dispCTAMsg">撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。</p>
-      <a class="sns-tag" id="dispSNSTag" href="https://www.instagram.com/iliy_ai_life_familiy/" target="_blank" style="text-decoration:none;">@iliy_ai_life_familiy</a>
+      <a class="sns-tag" id="dispSNSTag" href="https://www.instagram.com/iliy_ai_life_familiy/" target="_blank">@iliy_ai_life_familiy</a>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════ ADMIN ═══════════════════ -->
+<!-- ADMIN -->
 <div id="adminPage" class="screen">
   <div id="adminLogin" class="a-login">
     <div class="login-box">
@@ -357,14 +323,12 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
       <div class="login-err" id="loginErr">パスワードが違います</div>
     </div>
   </div>
-
   <div id="adminDash" style="display:none;">
     <div class="a-nav">
       <button class="a-nav-btn on" onclick="switchPanel('responses',this)">回答一覧</button>
       <button class="a-nav-btn" onclick="switchPanel('report',this)">月次レポート</button>
       <button class="a-nav-btn" onclick="switchPanel('settings',this)">設問設定</button>
     </div>
-
     <div class="a-panel on" id="panel-responses">
       <div class="url-bar">
         <div class="url-label">お客様用URL</div>
@@ -394,7 +358,6 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
         <div class="v-list" id="vList"></div>
       </div>
     </div>
-
     <div class="a-panel" id="panel-report">
       <div class="report-body">
         <div class="month-nav">
@@ -413,7 +376,6 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
         <div class="report-card"><div class="report-ttl">今月のお声</div><div class="voice-scroll" id="voiceScroll"></div></div>
       </div>
     </div>
-
     <div class="a-panel" id="panel-settings">
       <div class="settings-body">
         <div class="settings-section">
@@ -429,30 +391,30 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
             <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgStarLabel" placeholder="満足度を教えてください"></div>
           </div>
           <div class="fixed-q">
-            <div class="fixed-q-badge">改善ポイント（★4以下のみ表示）</div>
-            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgImproveLabel" placeholder="改善できる点はありましたか"></div>
-            <div class="s-in-row"><div class="s-in-lbl">選択肢（カンマ区切り）</div><input class="s-in" id="cfgImproveOpts" placeholder="スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間"></div>
-            <div class="s-in-row"><div class="s-in-lbl">詳細一言ラベル</div><input class="s-in" id="cfgImproveDetailLabel" placeholder="どのように改善できると思いますか"></div>
-            <div class="s-in-row"><div class="s-in-lbl">詳細一言サブテキスト</div><input class="s-in" id="cfgImproveDetailHint" placeholder="なくてもOKです"></div>
+            <div class="fixed-q-badge">改善ポイント（★4以下のみ）</div>
+            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgImproveLabel"></div>
+            <div class="s-in-row"><div class="s-in-lbl">選択肢（カンマ区切り）</div><input class="s-in" id="cfgImproveOpts"></div>
+            <div class="s-in-row"><div class="s-in-lbl">詳細一言ラベル</div><input class="s-in" id="cfgImproveDetailLabel"></div>
+            <div class="s-in-row"><div class="s-in-lbl">詳細サブテキスト</div><input class="s-in" id="cfgImproveDetailHint"></div>
           </div>
           <div class="fixed-q">
             <div class="fixed-q-badge">総合感想</div>
-            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgVoiceLabel" placeholder="今回の撮影全体を通して、いかがでしたか"></div>
-            <div class="s-in-row"><div class="s-in-lbl">サブテキスト</div><input class="s-in" id="cfgVoiceHint" placeholder="なくてもOKです"></div>
+            <div class="s-in-row"><div class="s-in-lbl">質問ラベル</div><input class="s-in" id="cfgVoiceLabel"></div>
+            <div class="s-in-row"><div class="s-in-lbl">サブテキスト</div><input class="s-in" id="cfgVoiceHint"></div>
           </div>
           <div class="fixed-q">
             <div class="fixed-q-badge">SNS同意</div>
-            <div class="s-in-row"><div class="s-in-lbl">メインテキスト</div><input class="s-in" id="cfgSNSMain" placeholder="SNSへの掲載に同意する"></div>
-            <div class="s-in-row"><div class="s-in-lbl">説明テキスト</div><input class="s-in" id="cfgSNSSub" placeholder="いただいたお声をInstagramなどで紹介させていただく場合があります。"></div>
+            <div class="s-in-row"><div class="s-in-lbl">メインテキスト</div><input class="s-in" id="cfgSNSMain"></div>
+            <div class="s-in-row"><div class="s-in-lbl">説明テキスト</div><input class="s-in" id="cfgSNSSub"></div>
           </div>
         </div>
         <div class="settings-section">
           <div class="settings-section-ttl">サンキューページ</div>
           <div class="fixed-q">
-            <div class="s-in-row"><div class="s-in-lbl">タイトル（&lt;br&gt;で改行可）</div><input class="s-in" id="cfgThanksTitle" placeholder="受け取りました。&lt;br&gt;ありがとうございます。"></div>
-            <div class="s-in-row"><div class="s-in-lbl">SNS CTAタイトル</div><input class="s-in" id="cfgCTATitle" placeholder="これからご来店されるお客様の参考のために"></div>
-            <div class="s-in-row"><div class="s-in-lbl">SNS CTAメッセージ</div><input class="s-in" id="cfgCTAMsg" placeholder="撮影のご感想をInstagramに投稿していただけると…"></div>
-            <div class="s-in-row"><div class="s-in-lbl">SNSタグ</div><input class="s-in" id="cfgSNSTag" placeholder="@iliy_ai_life_familiy"></div>
+            <div class="s-in-row"><div class="s-in-lbl">タイトル（&lt;br&gt;で改行可）</div><input class="s-in" id="cfgThanksTitle"></div>
+            <div class="s-in-row"><div class="s-in-lbl">SNS CTAタイトル</div><input class="s-in" id="cfgCTATitle"></div>
+            <div class="s-in-row"><div class="s-in-lbl">SNS CTAメッセージ</div><input class="s-in" id="cfgCTAMsg"></div>
+            <div class="s-in-row"><div class="s-in-lbl">SNSタグ</div><input class="s-in" id="cfgSNSTag"></div>
           </div>
         </div>
         <div class="settings-section">
@@ -493,29 +455,72 @@ const DEFAULTS = {
   snsTag: '@iliy_ai_life_familiy'
 };
 
+const LANG_EN = {
+  title: 'How was your photo session?',
+  starLabel: 'Please rate your experience',
+  improveLabel: 'What could we improve?',
+  improveOpts: 'Staff service,Shooting time,Studio facilities,Photo quality,Booking & guidance,Pricing,Waiting time',
+  improveDetailLabel: 'How could we improve?',
+  improveDetailHint: 'Optional',
+  improveDetailPlaceholder: 'e.g. A little more time would have helped our child relax.',
+  voiceLabel: 'Overall, how was your experience?',
+  voiceHint: 'Optional',
+  voicePlaceholder: 'Feel free to share your thoughts.',
+  snsMain: 'I agree to be featured on SNS',
+  snsSub: 'Your comments may be shared on Instagram. Your name will not be shown.',
+  btnNext: 'Next',
+  btnBack: 'Back',
+  btnSubmit: 'Submit',
+  thanksTitle: "Thank you so much.<br>We'll read every word.",
+  ctaTitle: 'For families visiting iliy in the future',
+  ctaMsg: 'Sharing your experience on Instagram helps other families decide. Feel free to tag us!',
+};
+
 let cfg = load('iliy_cfg') || {};
 let voices = [];
 let customQs = load('iliy_questions') || [];
 let starVal = 0, improveSelected = [], cqAnswers = {}, snsOK = false;
 let curStep = 0, allSteps = [];
 let filterVal = 'all';
+let currentLang = 'ja';
 let reportMonth = new Date(); reportMonth.setDate(1);
 
 function g(key) { return (cfg[key] !== undefined && cfg[key] !== '') ? cfg[key] : DEFAULTS[key]; }
 
-// ── URL判定で画面を切り替え ──
-function init() {
-  const isStaff = location.search.includes('staff');
-  if (isStaff) {
-    document.getElementById('customerPage').classList.remove('active');
-    document.getElementById('adminPage').classList.add('active');
-    document.title = 'iliy — スタッフ管理画面';
+// ── 言語切り替え ──
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('langJP').classList.toggle('active', lang === 'ja');
+  document.getElementById('langEN').classList.toggle('active', lang === 'en');
+
+  if (lang === 'en') {
+    document.getElementById('dispTitle').textContent = LANG_EN.title;
+    document.getElementById('dispStarLabel').textContent = LANG_EN.starLabel;
+    document.getElementById('dispImproveLabel').textContent = LANG_EN.improveLabel;
+    document.getElementById('dispImproveDetailLabel').textContent = LANG_EN.improveDetailLabel;
+    document.getElementById('dispImproveDetailHint').textContent = LANG_EN.improveDetailHint;
+    document.getElementById('improveText').placeholder = LANG_EN.improveDetailPlaceholder;
+    document.getElementById('dispVoiceLabel').textContent = LANG_EN.voiceLabel;
+    document.getElementById('dispVoiceHint').textContent = LANG_EN.voiceHint;
+    document.getElementById('voiceText').placeholder = LANG_EN.voicePlaceholder;
+    document.getElementById('dispSNSMain').textContent = LANG_EN.snsMain;
+    document.getElementById('dispSNSSub').textContent = LANG_EN.snsSub;
+    document.getElementById('dispThanksTitle').innerHTML = LANG_EN.thanksTitle;
+    document.getElementById('dispCTATitle').textContent = LANG_EN.ctaTitle;
+    document.getElementById('dispCTAMsg').textContent = LANG_EN.ctaMsg;
+    document.getElementById('nextStep0').textContent = LANG_EN.btnNext;
+    document.getElementById('btnNext2').textContent = LANG_EN.btnNext;
+    document.getElementById('btnSubmit').textContent = LANG_EN.btnSubmit;
+    document.getElementById('btnBack2').textContent = LANG_EN.btnBack;
+    document.getElementById('btnBack3').textContent = LANG_EN.btnBack;
+    const chips = document.getElementById('improveChips');
+    chips.innerHTML = LANG_EN.improveOpts.split(',').map(o => o.trim()).map(o =>
+      '<div class="chip" onclick="toggleChip(this,\'' + esc(o) + '\')">' + esc(o) + '</div>').join('');
   } else {
     applyConfig();
-    buildSteps();
-    buildDots();
-    paintStars();
   }
+  improveSelected = [];
+  document.querySelectorAll('#improveChips .chip').forEach(c => c.classList.remove('on'));
 }
 
 // ── Config ──
@@ -532,10 +537,14 @@ function applyConfig() {
   document.getElementById('dispThanksTitle').innerHTML = g('thanksTitle');
   document.getElementById('dispCTATitle').textContent = g('ctaTitle');
   document.getElementById('dispCTAMsg').textContent = g('ctaMsg');
-  document.getElementById('dispSNSTag').textContent = g('snsTag');
+  document.getElementById('nextStep0').textContent = '次へ';
+  document.getElementById('btnNext2').textContent = '次へ';
+  document.getElementById('btnSubmit').textContent = '送信する';
+  document.getElementById('btnBack2').textContent = '← 戻る';
+  document.getElementById('btnBack3').textContent = '← 戻る';
   const chips = document.getElementById('improveChips');
-  chips.innerHTML = g('improveOpts').split(',').map(o=>o.trim()).filter(Boolean).map(o=>
-    `<div class="chip" onclick="toggleChip(this,'${esc(o)}')">${esc(o)}</div>`).join('');
+  chips.innerHTML = g('improveOpts').split(',').map(o => o.trim()).filter(Boolean).map(o =>
+    '<div class="chip" onclick="toggleChip(this,\'' + esc(o) + '\')">' + esc(o) + '</div>').join('');
 }
 
 // ── Stars ──
@@ -621,8 +630,8 @@ function toggleSNS() {
 
 // ── Submit ──
 async function doSubmit() {
-  const btn=document.querySelector('#stepSNS .btn-next');
-  btn.disabled=true; btn.textContent='送信中…';
+  const btn=document.getElementById('btnSubmit');
+  btn.disabled=true; btn.textContent=currentLang==='en'?'Sending…':'送信中…';
   const now=new Date();
   const entry={
     id:Date.now(), date:fmt(now),
@@ -674,8 +683,7 @@ async function doLogin() {
   if (document.getElementById('passIn').value===PASS) {
     document.getElementById('adminLogin').style.display='none';
     document.getElementById('adminDash').style.display='block';
-    const base=location.href.split('?')[0];
-    document.getElementById('urlText').textContent=base;
+    document.getElementById('urlText').textContent=location.href.split('?')[0];
     await loadVoices();
     renderResponses(); renderReport(); renderSettings();
   } else {
@@ -687,24 +695,29 @@ async function doLogin() {
 async function loadVoices() {
   document.getElementById('vList').innerHTML='<div class="v-empty">読み込み中…</div>';
   try {
-    const res=await fetch(GAS_URL+'?t='+Date.now());
-    const raw=await res.json();
+    const raw=await fetch(GAS_URL+'?t='+Date.now()).then(r=>r.json());
     voices=raw.filter(v=>v&&v.date&&v.date!=='日付').map(v=>{
-      // dateを文字列に統一
-      const ds = String(v.date);
-      // YYYY/MM/DD または YYYY-MM-DDT... 両対応
-      let y,m;
+      const ds=String(v.date);
+      let y,m,d;
       if(ds.includes('/')){
-        const p=ds.split('/'); y=p[0]; m=(p[1]||'01').padStart(2,'0');
+        const p=ds.split('/'); y=p[0]; m=(p[1]||'01').padStart(2,'0'); d=(p[2]||'01').padStart(2,'0');
+        v.date=y+'/'+m+'/'+d;
       } else {
-        const d=new Date(ds); y=d.getFullYear(); m=String(d.getMonth()+1).padStart(2,'0');
-        // 表示用dateも整形
-        v.date = y+'/'+m+'/'+String(d.getDate()).padStart(2,'0');
+        const dt=new Date(ds); y=dt.getFullYear(); m=String(dt.getMonth()+1).padStart(2,'0'); d=String(dt.getDate()).padStart(2,'0');
+        v.date=y+'/'+m+'/'+d;
       }
-      v.month = y+'-'+m;
+      v.month=y+'-'+m;
       return v;
     });
   } catch(e){console.warn('読み込みエラー',e);voices=[];}
+}
+
+async function refreshVoices() {
+  const btn=document.querySelector('.refresh-btn');
+  btn.textContent='読み込み中…'; btn.style.opacity='.5';
+  await loadVoices();
+  renderResponses(); renderReport();
+  btn.textContent='↻ 更新'; btn.style.opacity='';
 }
 
 async function switchPanel(name,btn) {
@@ -717,8 +730,7 @@ async function switchPanel(name,btn) {
 }
 
 function copyURL() {
-  const url=document.getElementById('urlText').textContent;
-  navigator.clipboard.writeText(url).then(()=>{
+  navigator.clipboard.writeText(location.href.split('?')[0]).then(()=>{
     const btn=document.getElementById('urlCopyBtn');
     btn.textContent='コピーしました ✓'; btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='コピー';btn.classList.remove('copied');},2500);
@@ -732,14 +744,6 @@ function previewCustomer() {
 
 function setFilter(v,btn){filterVal=v;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderResponses();}
 
-async function refreshVoices() {
-  const btn = document.querySelector('.refresh-btn');
-  btn.classList.add('loading'); btn.textContent = '読み込み中…';
-  await loadVoices();
-  renderResponses(); renderReport();
-  btn.classList.remove('loading'); btn.textContent = '↻ 更新';
-}
-
 function renderResponses() {
   document.getElementById('sTot').textContent=voices.length;
   const starred=voices.filter(v=>v.star>0);
@@ -748,8 +752,7 @@ function renderResponses() {
   document.getElementById('sSNS').textContent=voices.length?Math.round(snsC/voices.length*100)+'%':'—';
   let list=voices;
   if(filterVal===5) list=voices.filter(v=>v.star===5);
-  
-  else if(filterVal==='low') list=voices.filter(v=>v.star>0&&v.star<=3);
+  else if(filterVal==='low') list=voices.filter(v=>v.star>0&&v.star<=4);
   else if(filterVal==='sns') list=voices.filter(v=>v.sns);
   const el=document.getElementById('vList');
   if(!list.length){el.innerHTML='<div class="v-empty">まだ回答がありません。</div>';return;}
@@ -821,7 +824,7 @@ function buildQEditor(q,i) {
   return `<div class="q-item"><div class="q-item-head"><input class="q-text-in" value="${esc(q.text)}" oninput="customQs[${i}].text=this.value" placeholder="質問文を入力"><button class="btn-del-q" onclick="delQuestion(${i})">×</button></div><input class="q-sub-in" value="${esc(q.hint||'')}" oninput="customQs[${i}].hint=this.value" placeholder="サブテキスト（なくてもOKです など）"><div class="q-controls"><select class="q-type-select" onchange="changeQType(${i},this.value)"><option value="single"${q.type==='single'?' selected':''}>一択</option><option value="multi"${q.type==='multi'?' selected':''}>複数選択</option><option value="free"${q.type==='free'?' selected':''}>自由記述</option></select><button class="style-btn${q.bold?' on':''}" onclick="toggleBold(${i},this)"><b>B</b></button><div class="color-row">${colSwatches}</div></div>${optsHtml}</div>`;
 }
 
-function saveSettings() {
+function saveSettings(){
   const fields={cfgTitle:'title',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
   Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)cfg[key]=el.value;});
   save('iliy_cfg',cfg); save('iliy_questions',customQs);
@@ -843,84 +846,17 @@ function fmt(d){return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate
 function pad(n){return String(n).padStart(2,'0');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-
-const LANG = {
-  ja: {
-    title: '今回の撮影はいかがでしたか？',
-    starLabel: '満足度を教えてください',
-    improveLabel: '改善できる点はありましたか',
-    improveOpts: 'スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間',
-    improveDetailLabel: 'どのように改善できると思いますか',
-    improveDetailHint: 'なくてもOKです',
-    improveDetailPlaceholder: '例：もう少し撮影時間に余裕があると、子どもがリラックスできたかもしれません。',
-    voiceLabel: '今回の撮影全体を通して、いかがでしたか',
-    voiceHint: 'なくてもOKです',
-    voicePlaceholder: 'ご自由にお書きください',
-    snsMain: 'SNSへの排載に同意する',
-    snsSub: 'いただいたお声をInstagramなどで紹介させていただく場合があります。お名前は排載しません。',
-    btnNext: '次へ',
-    btnBack: '← 戻る',
-    btnSubmit: '送信する',
-    thanksTitle: '受け取りました。<br>ありがとうございます。',
-    ctaTitle: 'これからご来店されるお客様の参考のために',
-    ctaMsg: '撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。',
-  },
-  en: {
-    title: 'How was your photo session?',
-    starLabel: 'Please rate your experience',
-    improveLabel: 'What could we improve?',
-    improveOpts: 'Staff service,Shooting time,Studio facilities,Photo quality,Booking & guidance,Pricing,Waiting time',
-    improveDetailLabel: 'How could we improve?',
-    improveDetailHint: 'Optional',
-    improveDetailPlaceholder: 'e.g. A little more time would have helped our child relax.',
-    voiceLabel: 'Overall, how was your experience?',
-    voiceHint: 'Optional',
-    voicePlaceholder: 'Feel free to share your thoughts.',
-    snsMain: 'I agree to be featured on SNS',
-    snsSub: 'Your comments may be shared on Instagram. Your name will not be shown.',
-    btnNext: 'Next',
-    btnBack: 'Back',
-    btnSubmit: 'Submit',
-    thanksTitle: 'Thank you so much.<br>We'll read every word.',
-    ctaTitle: 'For families visiting iliy in the future',
-    ctaMsg: 'Sharing your experience on Instagram helps other families decide. Feel free to tag us!',
-  }
-};
-
-let currentLang = 'ja';
-
-function setLang(lang) {
-  currentLang = lang;
-  document.getElementById('langJP').classList.toggle('active', lang === 'ja');
-  document.getElementById('langEN').classList.toggle('active', lang === 'en');
-  const L = LANG[lang];
-  document.getElementById('dispTitle').textContent = lang === 'ja' ? g('title') : L.title;
-  document.getElementById('dispStarLabel').textContent = lang === 'ja' ? g('starLabel') : L.starLabel;
-  document.getElementById('dispImproveLabel').textContent = lang === 'ja' ? g('improveLabel') : L.improveLabel;
-  document.getElementById('dispImproveDetailLabel').textContent = lang === 'ja' ? g('improveDetailLabel') : L.improveDetailLabel;
-  document.getElementById('dispImproveDetailHint').textContent = lang === 'ja' ? g('improveDetailHint') : L.improveDetailHint;
-  document.getElementById('improveText').placeholder = L.improveDetailPlaceholder;
-  document.getElementById('dispVoiceLabel').textContent = lang === 'ja' ? g('voiceLabel') : L.voiceLabel;
-  document.getElementById('dispVoiceHint').textContent = lang === 'ja' ? g('voiceHint') : L.voiceHint;
-  document.getElementById('voiceText').placeholder = L.voicePlaceholder;
-  document.getElementById('dispSNSMain').textContent = lang === 'ja' ? g('snsMain') : L.snsMain;
-  document.getElementById('dispSNSSub').textContent = lang === 'ja' ? g('snsSub') : L.snsSub;
-  document.getElementById('dispThanksTitle').innerHTML = lang === 'ja' ? g('thanksTitle') : L.thanksTitle;
-  document.getElementById('dispCTATitle').textContent = lang === 'ja' ? g('ctaTitle') : L.ctaTitle;
-  document.getElementById('dispCTAMsg').textContent = lang === 'ja' ? g('ctaMsg') : L.ctaMsg;
-  const chips = document.getElementById('improveChips');
-  chips.innerHTML = L.improveOpts.split(',').map(o => o.trim()).filter(Boolean).map(o =>
-    '<div class="chip" onclick="toggleChip(this,'' + esc(o) + '')">' + esc(o) + '</div>'
-  ).join('');
-  improveSelected = [];
-  document.querySelectorAll('.btn-next').forEach(b => {
-    if (b.getAttribute('onclick') === 'doSubmit()') b.textContent = L.btnSubmit;
-    else b.textContent = L.btnNext;
-  });
-  document.querySelectorAll('.btn-back').forEach(b => b.textContent = L.btnBack);
+// ── 起動 ──
+if (location.search.includes('staff')) {
+  document.getElementById('customerPage').classList.remove('active');
+  document.getElementById('adminPage').classList.add('active');
+  document.title = 'iliy — スタッフ管理画面';
+} else {
+  applyConfig();
+  buildSteps();
+  buildDots();
+  paintStars();
 }
-
-init();
 </script>
 </body>
 </html>
