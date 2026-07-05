@@ -577,6 +577,15 @@ function applyConfig() {
   document.getElementById('dispThanksTitle').innerHTML = g('thanksTitle');
   document.getElementById('dispCTATitle').textContent = g('ctaTitle');
   document.getElementById('dispCTAMsg').textContent = g('ctaMsg');
+  const snsTagEl = document.getElementById('dispSNSTag');
+  const snsTagVal = g('snsTag');
+  snsTagEl.textContent = snsTagVal;
+  // インスタURLを設定
+  if (currentBrand === 'wanoneclip') {
+    snsTagEl.href = 'https://www.instagram.com/' + snsTagVal.replace('@','') + '/';
+  } else {
+    snsTagEl.href = 'https://www.instagram.com/iliy_ai_life_familiy/';
+  }
   document.getElementById('nextStep0').textContent = '次へ';
   document.getElementById('btnNext2').textContent = '次へ';
   document.getElementById('btnSubmit').textContent = '送信する';
