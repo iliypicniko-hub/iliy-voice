@@ -232,6 +232,9 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .btn-preview:hover { background: rgba(200,150,90,.25); }
 .saved-msg { text-align: center; font-size: 12px; color: var(--sage); margin-top: 10px; display: none; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.brand-tabs { display: flex; border-bottom: 1px solid var(--line); background: var(--white); }
+.brand-tab { flex: 1; padding: 14px 8px; background: transparent; border: none; font-size: 13px; letter-spacing: .1em; color: var(--light); cursor: pointer; transition: all .2s; font-family: 'Cormorant Garamond', serif; border-bottom: 2px solid transparent; }
+.brand-tab.on { color: var(--accent); border-bottom-color: var(--accent); }
 .brand-badge { font-size: 10px; border-radius: 20px; padding: 2px 10px; font-weight: 400; letter-spacing: .04em; }
 .brand-iliy { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(140,111,80,.25); }
 .brand-wanoneclip { background: #edf0f8; color: #5a6a9a; border: 1px solid rgba(90,106,154,.25); }
@@ -250,7 +253,7 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
   </div>
   <div class="c-wrap">
     <div class="c-hero">
-      <div class="c-logo">iliy photo studio</div>
+      <div class="c-logo" id="dispLogo">iliy photo studio</div>
       <h1 class="c-title" id="dispTitle">今回の撮影はいかがでしたか？</h1>
     </div>
     <div class="dots" id="dots"></div>
@@ -387,6 +390,10 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
       </div>
     </div>
     <div class="a-panel" id="panel-settings">
+      <div class="brand-tabs">
+        <button class="brand-tab on" id="tabIliy" onclick="switchBrandTab('iliy',this)">iliy</button>
+        <button class="brand-tab" id="tabWano" onclick="switchBrandTab('wanoneclip',this)">wanoneclip</button>
+      </div>
       <div class="settings-body">
         <div class="settings-section">
           <div class="settings-section-ttl">ページ基本情報</div>
@@ -854,10 +861,15 @@ function renderReport() {
     :'<div style="font-size:13px;color:var(--light);padding:10px 0;">お声なし</div>';
 }
 
+let settingsQs = [];
+
 function renderSettings() {
+  const brandCfg = getBrandCfg();
+  settingsQs = getBrandQs();
+  const gBrand = (key) => (brandCfg[key] !== undefined && brandCfg[key] !== '') ? brandCfg[key] : DEFAULTS[key];
   const fields={cfgTitle:'title',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
-  Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=g(key);});
-  document.getElementById('qList').innerHTML=customQs.map((q,i)=>buildQEditor(q,i)).join('');
+  Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=gBrand(key);});
+  document.getElementById('qList').innerHTML=settingsQs.map((q,i)=>buildQEditor(q,i)).join('');
 }
 
 function buildQEditor(q,i) {
@@ -867,21 +879,47 @@ function buildQEditor(q,i) {
   return `<div class="q-item"><div class="q-item-head"><input class="q-text-in" value="${esc(q.text)}" oninput="customQs[${i}].text=this.value" placeholder="質問文を入力"><button class="btn-del-q" onclick="delQuestion(${i})">×</button></div><input class="q-sub-in" value="${esc(q.hint||'')}" oninput="customQs[${i}].hint=this.value" placeholder="サブテキスト（なくてもOKです など）"><div class="q-controls"><select class="q-type-select" onchange="changeQType(${i},this.value)"><option value="single"${q.type==='single'?' selected':''}>一択</option><option value="multi"${q.type==='multi'?' selected':''}>複数選択</option><option value="free"${q.type==='free'?' selected':''}>自由記述</option></select><button class="style-btn${q.bold?' on':''}" onclick="toggleBold(${i},this)"><b>B</b></button><div class="color-row">${colSwatches}</div></div>${optsHtml}</div>`;
 }
 
+let settingsBrand = 'iliy';
+
+function switchBrandTab(brand, btn) {
+  settingsBrand = brand;
+  document.querySelectorAll('.brand-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSettings();
+}
+
+function getBrandCfg() {
+  const key = settingsBrand === 'wanoneclip' ? 'iliy_cfg_wano' : 'iliy_cfg';
+  return load(key) || {};
+}
+
+function getBrandQs() {
+  const key = settingsBrand === 'wanoneclip' ? 'iliy_questions_wano' : 'iliy_questions';
+  return load(key) || [];
+}
+
 function saveSettings(){
   const fields={cfgTitle:'title',cfgStarLabel:'starLabel',cfgImproveLabel:'improveLabel',cfgImproveOpts:'improveOpts',cfgImproveDetailLabel:'improveDetailLabel',cfgImproveDetailHint:'improveDetailHint',cfgVoiceLabel:'voiceLabel',cfgVoiceHint:'voiceHint',cfgSNSMain:'snsMain',cfgSNSSub:'snsSub',cfgThanksTitle:'thanksTitle',cfgCTATitle:'ctaTitle',cfgCTAMsg:'ctaMsg',cfgSNSTag:'snsTag'};
-  Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)cfg[key]=el.value;});
-  save('iliy_cfg',cfg); save('iliy_questions',customQs);
+  const brandCfg = getBrandCfg();
+  Object.entries(fields).forEach(([id,key])=>{const el=document.getElementById(id);if(el)brandCfg[key]=el.value;});
+  const brandQs = getBrandQs();
+  // customQsをブランド別に保存（renderSettingsで読んだもの）
+  const cfgKey = settingsBrand === 'wanoneclip' ? 'iliy_cfg_wano' : 'iliy_cfg';
+  const qsKey  = settingsBrand === 'wanoneclip' ? 'iliy_questions_wano' : 'iliy_questions';
+  save(cfgKey, brandCfg);
+  save(qsKey, settingsQs);
+  if(settingsBrand === 'iliy'){ cfg = brandCfg; customQs = settingsQs; }
   document.getElementById('savedMsg').style.display='block';
   setTimeout(()=>document.getElementById('savedMsg').style.display='none',2000);
 }
 
-function addQuestion(){customQs.push({text:'',hint:'',type:'single',options:['',''],bold:false,color:'#ffffff'});renderSettings();}
-function delQuestion(i){customQs.splice(i,1);renderSettings();}
-function changeQType(i,v){customQs[i].type=v;if((v==='single'||v==='multi')&&!customQs[i].options?.length)customQs[i].options=['',''];renderSettings();}
-function toggleBold(i,btn){customQs[i].bold=!customQs[i].bold;btn.classList.toggle('on',customQs[i].bold);}
-function setQColor(i,c,el){customQs[i].color=c;el.closest('.color-row').querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('on'));el.classList.add('on');}
-function addOpt(i){customQs[i].options=customQs[i].options||[];customQs[i].options.push('');renderSettings();}
-function delOpt(i,oi){customQs[i].options.splice(oi,1);renderSettings();}
+function addQuestion(){settingsQs.push({text:'',hint:'',type:'single',options:['',''],bold:false,color:'#ffffff'});renderSettings();}
+function delQuestion(i){settingsQs.splice(i,1);renderSettings();}
+function changeQType(i,v){settingsQs[i].type=v;if((v==='single'||v==='multi')&&!settingsQs[i].options?.length)settingsQs[i].options=['',''];renderSettings();}
+function toggleBold(i,btn){settingsQs[i].bold=!settingsQs[i].bold;btn.classList.toggle('on',settingsQs[i].bold);}
+function setQColor(i,c,el){settingsQs[i].color=c;el.closest('.color-row').querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('on'));el.classList.add('on');}
+function addOpt(i){settingsQs[i].options=settingsQs[i].options||[];settingsQs[i].options.push('');renderSettings();}
+function delOpt(i,oi){settingsQs[i].options.splice(oi,1);renderSettings();}
 
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function load(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
@@ -898,15 +936,14 @@ if (location.search.includes('staff')) {
   const params = new URLSearchParams(location.search);
   currentBrand = params.get('brand') || 'iliy';
   if (currentBrand === 'wanoneclip') {
-    document.getElementById('dispLogo').textContent = 'wanoneclip';
+    // wanoneclip用のcfg/customQsに切り替え
+    cfg = load('iliy_cfg_wano') || {};
+    customQs = load('iliy_questions_wano') || [];
     document.title = 'wanoneclip — 撮影の感想をお聞かせください';
-    // wanoneclipのデフォルト値を上書き適用
-    const bd = BRAND_DEFAULTS.wanoneclip;
-    document.getElementById('dispTitle').textContent = g('title') !== DEFAULTS.title ? g('title') : bd.title;
-    document.getElementById('dispSNSTag').textContent = bd.snsTag;
-    document.getElementById('dispSNSTag').href = bd.snsLink;
   }
   applyConfig();
+  // ロゴをブランド名に
+  document.getElementById('dispLogo').textContent = currentBrand === 'wanoneclip' ? 'wanoneclip' : 'iliy photo studio';
   buildSteps();
   buildDots();
   paintStars();
