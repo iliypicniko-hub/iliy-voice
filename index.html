@@ -236,8 +236,6 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .brand-tab { flex: 1; padding: 14px 8px; background: transparent; border: none; font-size: 13px; letter-spacing: .1em; color: var(--light); cursor: pointer; transition: all .2s; font-family: 'Cormorant Garamond', serif; border-bottom: 2px solid transparent; }
 .brand-tab.on { color: var(--accent); border-bottom-color: var(--accent); }
 .brand-badge { font-size: 10px; border-radius: 20px; padding: 2px 10px; font-weight: 400; letter-spacing: .04em; }
-.btn-del-voice { background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--light); cursor: pointer; transition: all .2s; margin-top: 12px; }
-.btn-del-voice:hover { border-color: #e07060; color: #e07060; }
 .brand-iliy { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(140,111,80,.25); }
 .brand-wanoneclip { background: #edf0f8; color: #5a6a9a; border: 1px solid rgba(90,106,154,.25); }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
@@ -758,26 +756,6 @@ async function loadVoices() {
   } catch(e){console.warn('読み込みエラー',e);voices=[];}
 }
 
-async function deleteVoice(id, date, btn) {
-  if (!confirm('この回答を削除しますか？\n' + date)) return;
-  btn.textContent = '削除中…'; btn.disabled = true;
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', id: id })
-    });
-    await loadVoices();
-    renderResponses();
-    renderReport();
-  } catch(e) {
-    btn.textContent = '削除';
-    btn.disabled = false;
-    alert('削除に失敗しました。');
-  }
-}
-
 async function refreshVoices() {
   const btn=document.querySelector('.refresh-btn');
   btn.textContent='読み込み中…'; btn.style.opacity='.5';
@@ -845,7 +823,6 @@ function renderResponses() {
       ${v.improveText?`<div class="v-section"><div class="v-section-lbl">改善の詳細</div><div class="v-text">${esc(v.improveText)}</div></div>`:''}
       ${cqHtml?`<div class="v-section">${cqHtml}</div>`:''}
       ${v.voice?`<div class="v-section"><div class="v-section-lbl">総合的な感想</div><div class="v-text">${esc(v.voice)}</div></div>`:''}
-      <button class="btn-del-voice" onclick="deleteVoice('${v.id||''}','${v.date||''}',this)">削除</button>
     </div>`;
   }).join('');
 }
