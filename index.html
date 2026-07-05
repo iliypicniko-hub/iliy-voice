@@ -232,6 +232,9 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .btn-preview:hover { background: rgba(200,150,90,.25); }
 .saved-msg { text-align: center; font-size: 12px; color: var(--sage); margin-top: 10px; display: none; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.brand-badge { font-size: 10px; border-radius: 20px; padding: 2px 10px; font-weight: 400; letter-spacing: .04em; }
+.brand-iliy { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(140,111,80,.25); }
+.brand-wanoneclip { background: #edf0f8; color: #5a6a9a; border: 1px solid rgba(90,106,154,.25); }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
 </style>
 </head>
@@ -331,10 +334,15 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
     </div>
     <div class="a-panel on" id="panel-responses">
       <div class="url-bar">
-        <div class="url-label">お客様用URL</div>
+        <div class="url-label">お客様用URL — iliy</div>
         <div class="url-row">
           <div class="url-text" id="urlText"></div>
-          <button class="url-copy-btn" id="urlCopyBtn" onclick="copyURL()">コピー</button>
+          <button class="url-copy-btn" onclick="copyURL('iliy')">コピー</button>
+        </div>
+        <div class="url-label" style="margin-top:10px;">お客様用URL — wanoneclip</div>
+        <div class="url-row">
+          <div class="url-text" id="urlTextWano"></div>
+          <button class="url-copy-btn" onclick="copyURL('wanoneclip')">コピー</button>
         </div>
       </div>
       <div class="a-header-bar">
@@ -349,6 +357,8 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
         <div class="f-chips-row">
           <div class="f-chips">
             <button class="f-chip on" onclick="setFilter('all',this)">すべて</button>
+            <button class="f-chip brand-chip" onclick="setFilter('iliy',this)">iliy</button>
+            <button class="f-chip brand-chip" onclick="setFilter('wanoneclip',this)">wanoneclip</button>
             <button class="f-chip" onclick="setFilter(5,this)">★5</button>
             <button class="f-chip" onclick="setFilter('low',this)">★4以下</button>
             <button class="f-chip" onclick="setFilter('sns',this)">SNS同意</button>
@@ -438,6 +448,27 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbxN8PKl5idT4YSlhlzBIfnp
 const COLORS = ['#ffffff','#c89a60','#8c6f50','#7a9870','#e07060','#6088a8','#a070a0'];
 const COLOR_NAMES = ['白','ゴールド','ブラウン','グリーン','レッド','ブルー','パープル'];
 
+const BRAND_DEFAULTS = {
+  wanoneclip: {
+    logo: 'wanoneclip',
+    title: '今回の撮影はいかがでしたか？',
+    starLabel: '満足度を教えてください',
+    improveLabel: '改善できる点はありましたか',
+    improveOpts: 'スタッフ対応,撮影の時間,スタジオの設備,写真の仕上がり,予約・案内,料金,待ち時間',
+    improveDetailLabel: 'どのように改善できると思いますか',
+    improveDetailHint: 'なくてもOKです',
+    voiceLabel: '今回の撮影全体を通して、いかがでしたか',
+    voiceHint: 'なくてもOKです',
+    snsMain: 'SNSへの掲載に同意する',
+    snsSub: 'いただいたお声をInstagramなどで紹介させていただく場合があります。お名前は掲載しません。',
+    thanksTitle: '受け取りました。<br>ありがとうございます。',
+    ctaTitle: 'これからご来店されるお客様の参考のために',
+    ctaMsg: '撮影のご感想をInstagramに投稿していただけると、次のご家族の背中を押すことができます。ぜひ下記タグをつけて投稿してみてください。',
+    snsTag: '@wanoneclip',
+    snsLink: 'https://www.instagram.com/wanoneclip/',
+  }
+};
+
 const DEFAULTS = {
   title: '今回の撮影はいかがでしたか？',
   starLabel: '満足度を教えてください',
@@ -483,6 +514,7 @@ let starVal = 0, improveSelected = [], cqAnswers = {}, snsOK = false;
 let curStep = 0, allSteps = [];
 let filterVal = 'all';
 let currentLang = 'ja';
+let currentBrand = 'iliy';
 let reportMonth = new Date(); reportMonth.setDate(1);
 
 function g(key) { return (cfg[key] !== undefined && cfg[key] !== '') ? cfg[key] : DEFAULTS[key]; }
@@ -636,7 +668,7 @@ async function doSubmit() {
   const entry={
     id:Date.now(), date:fmt(now),
     month:now.getFullYear()+'-'+pad(now.getMonth()+1),
-    star:starVal, improve:[...improveSelected],
+    brand:currentBrand, star:starVal, improve:[...improveSelected],
     improveText:document.getElementById('improveText').value.trim(),
     cqAnswers:{...cqAnswers},
     voice:document.getElementById('voiceText').value.trim(),
@@ -683,7 +715,9 @@ async function doLogin() {
   if (document.getElementById('passIn').value===PASS) {
     document.getElementById('adminLogin').style.display='none';
     document.getElementById('adminDash').style.display='block';
-    document.getElementById('urlText').textContent=location.href.split('?')[0];
+    const baseUrl = location.href.split('?')[0];
+    document.getElementById('urlText').textContent = baseUrl;
+    document.getElementById('urlTextWano').textContent = baseUrl + '?brand=wanoneclip';
     await loadVoices();
     renderResponses(); renderReport(); renderSettings();
   } else {
@@ -729,9 +763,12 @@ async function switchPanel(name,btn) {
   if(name==='settings') renderSettings();
 }
 
-function copyURL() {
-  navigator.clipboard.writeText(location.href.split('?')[0]).then(()=>{
-    const btn=document.getElementById('urlCopyBtn');
+function copyURL(brand) {
+  const base = location.href.split('?')[0];
+  const url = brand === 'wanoneclip' ? base + '?brand=wanoneclip' : base;
+  navigator.clipboard.writeText(url).then(()=>{
+    const btns = document.querySelectorAll('.url-copy-btn');
+    const btn = brand === 'wanoneclip' ? btns[1] : btns[0];
     btn.textContent='コピーしました ✓'; btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='コピー';btn.classList.remove('copied');},2500);
   });
@@ -754,6 +791,8 @@ function renderResponses() {
   if(filterVal===5) list=voices.filter(v=>v.star===5);
   else if(filterVal==='low') list=voices.filter(v=>v.star>0&&v.star<=4);
   else if(filterVal==='sns') list=voices.filter(v=>v.sns);
+  else if(filterVal==='iliy') list=voices.filter(v=>!v.brand||v.brand==='iliy');
+  else if(filterVal==='wanoneclip') list=voices.filter(v=>v.brand==='wanoneclip');
   const el=document.getElementById('vList');
   if(!list.length){el.innerHTML='<div class="v-empty">まだ回答がありません。</div>';return;}
   el.innerHTML=list.map((v,i)=>{
@@ -764,7 +803,11 @@ function renderResponses() {
     }).join('');
     return `<div class="v-card" style="animation-delay:${i*.04}s">
       <div class="v-head"><div class="v-date">${v.date}</div>
-        <div class="v-right">${v.star?`<div class="v-stars">${'★'.repeat(v.star)}${'☆'.repeat(5-v.star)}</div>`:''}${v.sns?'<div class="sns-badge">SNS可</div>':''}</div>
+        <div class="v-right">
+          <div class="brand-badge brand-${v.brand||'iliy'}">${v.brand||'iliy'}</div>
+          ${v.star?`<div class="v-stars">${'★'.repeat(v.star)}${'☆'.repeat(5-v.star)}</div>`:''}
+          ${v.sns?'<div class="sns-badge">SNS可</div>':''}
+        </div>
       </div>
       ${v.improve?.length?`<div class="v-section"><div class="v-section-lbl">改善ポイント</div><div class="v-tags">${v.improve.map(t=>`<div class="v-tag">${esc(t)}</div>`).join('')}</div></div>`:''}
       ${v.improveText?`<div class="v-section"><div class="v-section-lbl">改善の詳細</div><div class="v-text">${esc(v.improveText)}</div></div>`:''}
@@ -852,6 +895,17 @@ if (location.search.includes('staff')) {
   document.getElementById('adminPage').classList.add('active');
   document.title = 'iliy — スタッフ管理画面';
 } else {
+  const params = new URLSearchParams(location.search);
+  currentBrand = params.get('brand') || 'iliy';
+  if (currentBrand === 'wanoneclip') {
+    document.getElementById('dispLogo').textContent = 'wanoneclip';
+    document.title = 'wanoneclip — 撮影の感想をお聞かせください';
+    // wanoneclipのデフォルト値を上書き適用
+    const bd = BRAND_DEFAULTS.wanoneclip;
+    document.getElementById('dispTitle').textContent = g('title') !== DEFAULTS.title ? g('title') : bd.title;
+    document.getElementById('dispSNSTag').textContent = bd.snsTag;
+    document.getElementById('dispSNSTag').href = bd.snsLink;
+  }
   applyConfig();
   buildSteps();
   buildDots();
