@@ -236,6 +236,8 @@ body { font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--t
 .brand-tab { flex: 1; padding: 14px 8px; background: transparent; border: none; font-size: 13px; letter-spacing: .1em; color: var(--light); cursor: pointer; transition: all .2s; font-family: 'Cormorant Garamond', serif; border-bottom: 2px solid transparent; }
 .brand-tab.on { color: var(--accent); border-bottom-color: var(--accent); }
 .brand-badge { font-size: 10px; border-radius: 20px; padding: 2px 10px; font-weight: 400; letter-spacing: .04em; }
+.btn-more { width: 100%; background: var(--off); border: 1px solid var(--line); border-radius: 50px; padding: 13px; font-size: 13px; color: var(--mid); cursor: pointer; transition: all .2s; margin-top: 12px; letter-spacing: .08em; font-family: 'Noto Sans JP', sans-serif; }
+.btn-more:hover { border-color: var(--accent); color: var(--accent); }
 .brand-iliy { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(140,111,80,.25); }
 .brand-wanoneclip { background: #edf0f8; color: #5a6a9a; border: 1px solid rgba(90,106,154,.25); }
 @keyframes heartpop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
@@ -800,7 +802,10 @@ function previewCustomer() {
 
 function setFilter(v,btn){filterVal=v;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderResponses();}
 
-function renderResponses() {
+let displayCount = 10;
+
+function renderResponses(append) {
+  if (!append) displayCount = 10;
   document.getElementById('sTot').textContent=voices.length;
   const starred=voices.filter(v=>v.star>0);
   document.getElementById('sAvg').textContent=starred.length?(starred.reduce((s,v)=>s+v.star,0)/starred.length).toFixed(1):'—';
@@ -812,9 +817,17 @@ function renderResponses() {
   else if(filterVal==='sns') list=voices.filter(v=>v.sns);
   else if(filterVal==='iliy') list=voices.filter(v=>!v.brand||v.brand==='iliy');
   else if(filterVal==='wanoneclip') list=voices.filter(v=>v.brand==='wanoneclip');
+  // 新しい順にソート
+  list = list.slice().sort((a,b)=>{
+    const da = a.date ? a.date.replace(/\//g,'-') : '';
+    const db = b.date ? b.date.replace(/\//g,'-') : '';
+    return db.localeCompare(da);
+  });
   const el=document.getElementById('vList');
   if(!list.length){el.innerHTML='<div class="v-empty">まだ回答がありません。</div>';return;}
-  el.innerHTML=list.map((v,i)=>{
+  const shown = list.slice(0, displayCount);
+  const remaining = list.length - displayCount;
+  el.innerHTML=shown.map((v,i)=>{
     const cqHtml=Object.keys(v.cqAnswers||{}).map(k=>{
       const q=customQs[+k];if(!q)return'';
       const ans=Array.isArray(v.cqAnswers[k])?v.cqAnswers[k].join('、'):v.cqAnswers[k];
@@ -833,7 +846,14 @@ function renderResponses() {
       ${cqHtml?`<div class="v-section">${cqHtml}</div>`:''}
       ${v.voice?`<div class="v-section"><div class="v-section-lbl">総合的な感想</div><div class="v-text">${esc(v.voice)}</div></div>`:''}
     </div>`;
-  }).join('');
+  }).join('') + (remaining > 0
+    ? `<button class="btn-more" onclick="loadMore()">もっと見る（あと${remaining}件）</button>`
+    : '');
+}
+
+function loadMore() {
+  displayCount += 10;
+  renderResponses(true);
 }
 
 function changeMonth(d){reportMonth.setMonth(reportMonth.getMonth()+d);renderReport();}
