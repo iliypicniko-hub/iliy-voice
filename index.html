@@ -564,6 +564,7 @@ function setLang(lang) {
 
 // ── Config ──
 function applyConfig() {
+  document.getElementById('dispLogo').textContent = currentBrand === 'wanoneclip' ? 'wanoneclip' : 'iliy photo studio';
   document.getElementById('dispTitle').textContent = g('title');
   document.getElementById('dispStarLabel').textContent = g('starLabel');
   document.getElementById('dispImproveLabel').textContent = g('improveLabel');
